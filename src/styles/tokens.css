@@ -1,0 +1,21 @@
+/*
+ * Design tokens from CLAUDE.md. Single source of truth for colours,
+ * typography and spacing. Tailwind reads them via @theme in global.css,
+ * so utility classes (bg-bg, text-ink, rounded-card…) resolve to these vars.
+ */
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --ink: #16181c;
+  --muted: #5c6067;
+  --accent: #b08b4f;
+  --accent-ink: #ffffff;
+  --line: #e6e1d9;
+  --overlay: rgba(13, 15, 18, 0.45);
+
+  --font-display: 'OSH Display', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'OSH Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-card: 12px;
+  --radius-pill: 999px;
+}

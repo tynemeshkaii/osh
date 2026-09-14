@@ -1,0 +1,25 @@
+---
+import Section from '@/components/Section.astro';
+import { content } from '@/content/schema';
+
+const { gallery } = content;
+---
+
+<Section id="gallery" heading={gallery.heading} sub={gallery.sub}>
+  <ul class="grid grid-cols-2 gap-3">
+    {gallery.captions.map((caption, i) => (
+      <li class:list={[(i === 0 || i === 3) && 'col-span-2']}>
+        <figure>
+          <!-- Image placeholder; real webp/avif with lazy loading in stage 4. -->
+          <div
+            class="media-placeholder w-full overflow-hidden rounded-card"
+            style={`aspect-ratio: ${i === 0 || i === 3 ? '16 / 10' : '1 / 1'};`}
+            role="img"
+            aria-label={caption}
+          />
+          <figcaption class="mt-2 text-small text-muted">{caption}</figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+</Section>

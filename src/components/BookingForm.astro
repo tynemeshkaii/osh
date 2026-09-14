@@ -1,0 +1,116 @@
+---
+import Section from '@/components/Section.astro';
+import { content, finalText } from '@/content/schema';
+import { whatsappHref } from '@/lib/links';
+
+const { form, footer } = content;
+const { step1, step2, progress, whatsappBlock } = form;
+const timeHelper = finalText(step1.fields.time.helper);
+const waHref = whatsappHref(footer.phone, whatsappBlock.prefilledMessage);
+
+const inputClass =
+  'mt-1 block h-12 w-full rounded-card border border-line bg-surface px-4 text-body outline-none focus:border-accent';
+const labelClass = 'block text-small font-medium';
+---
+
+<Section id="booking" heading={form.heading} sub={form.sub}>
+  <!-- Visual markup only. Step switching, validation and submit arrive in stage 5. -->
+  <form id="booking-form" class="rounded-card border border-line bg-surface p-5 md:p-6" novalidate>
+    <input type="hidden" name="variant" value="" data-variant-field />
+
+    <fieldset data-step="1" class="border-0 p-0">
+      <p class="text-small text-muted">{progress.step1}</p>
+      <legend class="mt-1 text-h3">{step1.heading}</legend>
+
+      <div class="mt-5 grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+          <label for="f-date" class={labelClass}>{step1.fields.date.label}</label>
+          <input id="f-date" name="date" type="date" class={inputClass} autocomplete="off" />
+        </div>
+        <div>
+          <label for="f-time" class={labelClass}>{step1.fields.time.label}</label>
+          <input id="f-time" name="time" type="time" step="900" class={inputClass} autocomplete="off" />
+          {timeHelper && <p class="mt-1 text-small text-muted">{timeHelper}</p>}
+        </div>
+        <div>
+          <label for="f-guests" class={labelClass}>{step1.fields.guests.label}</label>
+          <input id="f-guests" name="guests" type="number" min="1" max="20" value="2" inputmode="numeric" class={inputClass} autocomplete="off" />
+        </div>
+      </div>
+
+      <fieldset class="mt-5 border-0 p-0">
+        <legend class={labelClass}>{step1.fields.offer.label}</legend>
+        <div class="mt-2 grid gap-2">
+          {step1.fields.offer.options.map((opt) => (
+            <label class="flex min-h-[48px] cursor-pointer items-center gap-3 rounded-card border border-line px-4 has-[:checked]:border-accent">
+              <input type="radio" name="offer" value={opt.value} checked={opt.default} class="h-5 w-5 accent-accent" />
+              <span class="text-body">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <button type="button" class="mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-ink px-6 text-body font-medium text-white" data-step-next>
+        {step1.cta}
+      </button>
+    </fieldset>
+
+    <hr class="my-8 border-line" />
+
+    <fieldset data-step="2" class="border-0 p-0">
+      <div class="flex items-baseline justify-between">
+        <p class="text-small text-muted">{progress.step2}</p>
+        <button type="button" class="min-h-[44px] text-small font-medium underline" data-step-back>{progress.back}</button>
+      </div>
+      <legend class="mt-1 text-h3">{step2.heading}</legend>
+
+      <div class="mt-5 grid gap-4">
+        <div>
+          <label for="f-name" class={labelClass}>{step2.fields.name.label}</label>
+          <input id="f-name" name="name" type="text" placeholder={step2.fields.name.placeholder} autocomplete="name" class={inputClass} required={step2.fields.name.required} />
+        </div>
+        <div>
+          <label for="f-phone" class={labelClass}>{step2.fields.phone.label}</label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder={step2.fields.phone.placeholder} autocomplete="tel" class={inputClass} required={step2.fields.phone.required} />
+          {step2.fields.phone.helper && <p class="mt-1 text-small text-muted">{step2.fields.phone.helper}</p>}
+        </div>
+        <div>
+          <label for="f-email" class={labelClass}>
+            {step2.fields.email.label}
+            {step2.fields.email.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.email.optionalSuffix}</span>}
+          </label>
+          <input id="f-email" name="email" type="email" inputmode="email" placeholder={step2.fields.email.placeholder} autocomplete="email" class={inputClass} />
+        </div>
+        <div>
+          <label for="f-notes" class={labelClass}>
+            {step2.fields.notes.label}
+            {step2.fields.notes.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.notes.optionalSuffix}</span>}
+          </label>
+          <textarea id="f-notes" name="notes" rows="3" placeholder={step2.fields.notes.placeholder} class={`${inputClass} h-auto py-3`} autocomplete="off"></textarea>
+        </div>
+        <label class="flex min-h-[44px] cursor-pointer items-start gap-3">
+          <input type="checkbox" name="consent" class="mt-1 h-5 w-5 shrink-0 accent-accent" required={step2.fields.consent.required} />
+          <span class="text-small">{step2.fields.consent.label}</span>
+        </label>
+      </div>
+
+      <button type="submit" class="mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-accent px-6 text-body font-medium text-accent-ink" data-submit data-loading-label={step2.ctaLoading}>
+        {step2.cta}
+      </button>
+      <p class="mt-3 text-small text-muted">{step2.microcopy}</p>
+    </fieldset>
+  </form>
+
+  <aside class="mt-6 rounded-card border border-line p-5">
+    <h3 class="text-h3">{whatsappBlock.heading}</h3>
+    <p class="mt-2 text-body text-muted">{whatsappBlock.body}</p>
+    <a href={waHref} target="_blank" rel="noopener" class="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-pill border border-ink px-5 text-body font-medium" data-cta="whatsapp">
+      {whatsappBlock.cta}
+    </a>
+  </aside>
+</Section>
+
+<script>
+  // Stage 1: no submission yet — keep the page from reloading on Enter/submit.
+  document.getElementById('booking-form')?.addEventListener('submit', (e) => e.preventDefault());
+</script>

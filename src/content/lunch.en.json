@@ -1,0 +1,235 @@
+{
+  "_meta": {
+    "locale": "en",
+    "version": "1.0",
+    "note": "All landing-page copy lives here. Never hardcode strings in components. Values wrapped in {{ }} are placeholders that MUST be replaced with real data before launch — see _placeholders."
+  },
+
+  "_placeholders": {
+    "RATING": "Real Google rating, e.g. 4.6",
+    "REVIEW_COUNT": "Real number of Google reviews",
+    "QUOTE_1_3": "Three real review quotes + author names: one about the view, one about presentation, one about service",
+    "COURSE_1_4": "Real four-course menu contents",
+    "AVG_CHECK": "Average a-la-carte spend per person, e.g. 190 AED",
+    "LAST_SEATING": "5:30 PM or 6:00 PM",
+    "LATE_POLICY": "How long a table is held, e.g. 15 minutes",
+    "GROUP_THRESHOLD": "Group size that requires a deposit, or remove group_note entirely"
+  },
+
+  "seo": {
+    "title": "Lunch at OSH Del Mar — Terrace Dining Above the Marina, JBR",
+    "description": "Four courses for 150 AED, or 20% off à la carte. Daily 2–6 PM on the M-floor terrace at Address Beach Resort. Free valet. Request your table in 30 seconds.",
+    "ogImageAlt": "The terrace at OSH Del Mar at sunset, overlooking Dubai Marina"
+  },
+
+  "hero": {
+    "eyebrow": "OSH DEL MAR · ADDRESS BEACH RESORT, M FLOOR",
+    "variants": {
+      "view": {
+        "h1": "The lunch that ends with sunset over the sea",
+        "sub": "Four courses for 150 AED, or 20% off the à la carte menu. Daily, 2 to 6 PM, on the terrace above Dubai Marina."
+      },
+      "business": {
+        "h1": "Some deals close better with a sea view",
+        "sub": "A four-course business lunch, 150 AED, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk."
+      },
+      "price": {
+        "h1": "An Address Beach Resort dinner, at lunch prices",
+        "sub": "Same kitchen, same terrace, same view — just before 6 PM. Four courses for 150 AED, or 20% off everything à la carte."
+      }
+    },
+    "defaultVariant": "view",
+    "cta": "Request my table",
+    "ctaAlternatives": ["Check my table", "Reserve my table"],
+    "ctaMicrocopy": "30 seconds. No prepayment. Free cancellation.",
+    "trustStrip": [
+      "★ {{RATING}} on Google · {{REVIEW_COUNT}} reviews",
+      "Address Beach Resort, M Floor",
+      "Free valet parking"
+    ]
+  },
+
+  "offer": {
+    "heading": "Two ways to do lunch here",
+    "sub": "Both run daily, 2 to 6 PM. Pick one when you request your table — you can still change your mind with the host on the day.",
+    "cards": [
+      {
+        "id": "set",
+        "badge": "Most popular",
+        "title": "Four-course business lunch",
+        "price": "150 AED per person",
+        "items": ["{{COURSE_1}}", "{{COURSE_2}}", "{{COURSE_3}}", "{{COURSE_4}}"],
+        "footnote": "Served in about an hour, if you're on a clock.",
+        "cta": "Request this"
+      },
+      {
+        "id": "alacarte",
+        "badge": null,
+        "title": "20% off the à la carte menu",
+        "price": "Order whatever you want, minus 20%",
+        "items": [
+          "The charcoal grill, the tandoor, the full cocktail list",
+          "Dry-aged seabass and hamachi from the fish bar",
+          "À la carte averages around {{AVG_CHECK}} per person — so this is roughly what the set menu costs, with the whole menu open to you"
+        ],
+        "footnote": null,
+        "cta": "Request this"
+      }
+    ],
+    "closing": "Come at 2 and make an afternoon of it. Come at 5 and the sun goes down while you're still at the table — in Dubai it lands right in the middle of the last seating."
+  },
+
+  "socialProof": {
+    "heading": "People come back for the terrace",
+    "ratingLine": "★ {{RATING}} on Google · {{REVIEW_COUNT}} reviews · Featured in TimeOut Dubai and VisitDubai",
+    "quotes": [
+      { "text": "{{QUOTE_1}}", "author": "{{NAME_1}}", "source": "Google" },
+      { "text": "{{QUOTE_2}}", "author": "{{NAME_2}}", "source": "TripAdvisor" },
+      { "text": "{{QUOTE_3}}", "author": "{{NAME_3}}", "source": "Google" }
+    ],
+    "pressCaption": "Address Hotels · TimeOut Dubai · VisitDubai"
+  },
+
+  "gallery": {
+    "heading": "The M floor, from 2 PM to sunset",
+    "sub": "The terrace sits above The Walk at JBR, facing the marina and Ain Dubai. Inside, the room is built around the open grills.",
+    "captions": ["The terrace at 2 PM", "The same table at 6", "The open grills", "Ain Dubai from the rail"]
+  },
+
+  "menu": {
+    "heading": "What's in the four courses",
+    "sub": "Modern Uzbek cooking with a seafood hand — charcoal, smoke and a tandoor, run by a kitchen that also keeps the first dry-aged fish bar in Dubai.",
+    "courses": [
+      { "label": "First course", "body": "{{COURSE_1}}" },
+      { "label": "Second course", "body": "{{COURSE_2}}" },
+      { "label": "Main", "body": "{{COURSE_3}}" },
+      { "label": "Dessert", "body": "{{COURSE_4}}" }
+    ],
+    "closing": "The dry-aged seabass and hamachi live on the à la carte menu. It's the first dry-aged fish bar in the city, and it's the reason a lot of people come back for dinner after finding us at lunch."
+  },
+
+  "practical": {
+    "heading": "Before you come",
+    "items": [
+      { "label": "Getting here", "body": "Address Beach Resort, The Walk, JBR. Take the lift to the M floor — the restaurant is straight ahead." },
+      { "label": "Parking", "body": "Valet is free. Just tell them you're dining at OSH Del Mar." },
+      { "label": "Timing", "body": "Service runs 2 to 6 PM daily. Last seating {{LAST_SEATING}}." },
+      { "label": "Dress code", "body": "Smart casual. The terrace gets a breeze after five." },
+      { "label": "Children", "body": "Welcome. High chairs available — mention it in the notes." },
+      { "label": "Dietary", "body": "Vegetarian options across all four courses. Tell us about allergies when you request the table and the kitchen will work around them." }
+    ]
+  },
+
+  "faq": {
+    "heading": "Questions people actually ask",
+    "items": [
+      {
+        "q": "Will I get a table with a view?",
+        "a": "Ask for one in the notes and we'll do our best. Terrace tables go first on weekends, so the earlier you send the request, the better your odds. Every table indoors faces the windows."
+      },
+      {
+        "q": "Do I pay anything now?",
+        "a": "No. Nothing is charged when you request a table. You pay at the restaurant, as normal. Groups of {{GROUP_THRESHOLD}} or more may need a deposit — the host will tell you when confirming."
+      },
+      {
+        "q": "How quickly will you confirm?",
+        "a": "Within 15 minutes between 10 AM and 11 PM. Send it later than that and you'll hear from us first thing in the morning."
+      },
+      {
+        "q": "Can I change or cancel it?",
+        "a": "Yes, any time. Reply in the same WhatsApp chat and we'll move it or cancel it. No fee, no questions."
+      },
+      {
+        "q": "What if I'm running late?",
+        "a": "Message us in the same chat. We hold tables for {{LATE_POLICY}} — after that we'll seat you as soon as something opens up."
+      },
+      {
+        "q": "Can you take a group of ten or more?",
+        "a": "Yes. Put the number in the notes and the host will call you to set it up properly — big tables on the terrace need a little planning."
+      }
+    ]
+  },
+
+  "form": {
+    "heading": "Request your table",
+    "sub": "Two steps, about thirty seconds. We confirm on WhatsApp.",
+    "progress": { "step1": "Step 1 of 2", "step2": "Step 2 of 2", "back": "Back" },
+    "step1": {
+      "heading": "When are you coming?",
+      "fields": {
+        "date": { "label": "Date" },
+        "time": { "label": "Time", "helper": "Last seating {{LAST_SEATING}}" },
+        "guests": { "label": "Guests" },
+        "offer": {
+          "label": "Which one?",
+          "options": [
+            { "value": "set", "label": "Four courses — 150 AED", "default": true },
+            { "value": "alacarte", "label": "20% off à la carte", "default": false }
+          ]
+        }
+      },
+      "cta": "Continue"
+    },
+    "step2": {
+      "heading": "Where should we confirm?",
+      "fields": {
+        "name": { "label": "Your name", "placeholder": "Amir", "required": true },
+        "phone": {
+          "label": "WhatsApp number",
+          "helper": "This is where the confirmation goes.",
+          "placeholder": "+971 50 123 4567",
+          "required": true
+        },
+        "email": { "label": "Email", "optionalSuffix": "(optional)", "placeholder": "you@email.com", "required": false },
+        "notes": {
+          "label": "Anything we should know?",
+          "optionalSuffix": "(optional)",
+          "placeholder": "Birthday, a table by the terrace rail, a high chair…",
+          "required": false
+        },
+        "consent": { "label": "I agree to be contacted about this reservation.", "required": true }
+      },
+      "cta": "Request my table",
+      "ctaLoading": "Sending…",
+      "microcopy": "No prepayment. We'll confirm on WhatsApp within 15 minutes — or first thing in the morning if it's after 11 PM."
+    },
+    "errors": {
+      "nameRequired": "We'll need a name for the table.",
+      "phoneRequired": "We confirm on WhatsApp, so we need a number.",
+      "phoneInvalid": "That number doesn't look right. Include the country code, like +971 50 123 4567.",
+      "emailInvalid": "That email looks off — check the spelling, or just leave it blank.",
+      "dateTimeRequired": "Pick a date and time first.",
+      "consentRequired": "Tick the box so we're allowed to message you back.",
+      "slotUnavailable": "That slot is full. The closest we have is {{ALT_TIME}} — or try another day.",
+      "network": "That didn't go through. Check your connection and try again — everything you typed is still here.",
+      "server": "Something broke on our side. Message the host on WhatsApp and they'll sort it out right now."
+    },
+    "whatsappBlock": {
+      "heading": "Something unusual?",
+      "body": "A table for twelve, a birthday, a question about the terrace — talk to the host directly.",
+      "cta": "Message us on WhatsApp",
+      "prefilledMessage": "Hi OSH Del Mar — I'd like to ask about a lunch table."
+    }
+  },
+
+  "thanks": {
+    "h1": "Got it. The host is checking your table.",
+    "summaryTemplate": "{{GUESTS}} guests · {{DATE}} at {{TIME}} · {{OFFER}}",
+    "steps": [
+      "The host checks availability for that time.",
+      "You get a WhatsApp message confirming it — usually within 15 minutes.",
+      "Come to the M floor at Address Beach Resort. Valet is free."
+    ],
+    "cta": "Open WhatsApp",
+    "ctaMicrocopy": "Nothing has been charged. If plans change, just reply in that chat.",
+    "instagram": "Want to see what the terrace looks like tonight? @oshdubai"
+  },
+
+  "stickyCta": { "label": "Request your table", "note": "Daily 2–6 PM" },
+
+  "footer": {
+    "address": "OSH Del Mar · Address Beach Resort, The Walk, JBR, Dubai · M Floor",
+    "phone": "+971 50 914 4215",
+    "copyright": "© 2026 OSH Del Mar Restaurants L.L.C"
+  }
+}

@@ -1,0 +1,18 @@
+---
+import Section from '@/components/Section.astro';
+import { content, finalItems } from '@/content/schema';
+
+const { practical } = content;
+const items = finalItems(practical.items, ['body']);
+---
+
+<Section id="practical" heading={practical.heading}>
+  <dl class="grid gap-6 md:grid-cols-2">
+    {items.map((item) => (
+      <div>
+        <dt class="text-body font-medium">{item.label}</dt>
+        <dd class="mt-1 text-body text-muted">{item.body}</dd>
+      </div>
+    ))}
+  </dl>
+</Section>

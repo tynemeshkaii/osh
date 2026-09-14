@@ -1,0 +1,39 @@
+---
+import { content } from '@/content/schema';
+
+const { stickyCta } = content;
+---
+
+<div
+  id="sticky-cta"
+  class="fixed inset-x-0 bottom-0 z-50 translate-y-full border-t border-line bg-surface/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 data-[visible]:translate-y-0"
+  aria-hidden="true"
+>
+  <div class="mx-auto flex max-w-[640px] items-center justify-between gap-4">
+    <span class="text-small text-muted">{stickyCta.note}</span>
+    <a href="#booking" class="inline-flex min-h-[48px] items-center justify-center rounded-pill bg-accent px-6 text-body font-medium text-accent-ink" data-cta="sticky">
+      {stickyCta.label}
+    </a>
+  </div>
+</div>
+
+<script>
+  // Show after the hero has scrolled away; hide while the form is on screen.
+  const bar = document.getElementById('sticky-cta');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const form = document.getElementById('booking');
+
+  if (bar && hero && form && 'IntersectionObserver' in window) {
+    let heroVisible = true;
+    let formVisible = false;
+
+    const apply = () => {
+      const show = !heroVisible && !formVisible;
+      bar.toggleAttribute('data-visible', show);
+      bar.setAttribute('aria-hidden', String(!show));
+    };
+
+    new IntersectionObserver(([e]) => { heroVisible = !!e?.isIntersecting; apply(); }, { threshold: 0.1 }).observe(hero);
+    new IntersectionObserver(([e]) => { formVisible = !!e?.isIntersecting; apply(); }, { threshold: 0 }).observe(form);
+  }
+</script>

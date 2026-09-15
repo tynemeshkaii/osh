@@ -12,21 +12,30 @@ export const OFFER_IDS: readonly OfferId[] = ['set', 'alacarte'] as const;
 
 export type HeroVariantId = 'view' | 'business' | 'price';
 
-/** Step 1 fields: when and what. */
+/** The restaurant's zone. "Today" and "has this slot passed" are decided here, not in the visitor's zone. */
+export const RESTAURANT_TZ = 'Asia/Dubai';
+
+/**
+ * Seatings the guest can request, HH:MM, 24h. The last entry is the last
+ * seating — the form offers exactly these, nothing else is accepted.
+ */
+export const TIME_SLOTS: readonly string[] = [
+  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+] as const;
+
+/** Step 1 fields: when. */
 export interface Step1Input {
   date: string; // YYYY-MM-DD
-  time: string; // HH:MM
+  time: string; // HH:MM, one of TIME_SLOTS
   guests: string | number;
-  offer: string;
 }
 
-/** Step 2 fields: who and where to confirm. */
+/** Step 2 fields: who, which lunch, where to confirm. */
 export interface Step2Input {
   name: string;
   phone: string;
-  email?: string;
+  offer: string;
   notes?: string;
-  consent: boolean | string;
 }
 
 export type BookingInput = Step1Input & Step2Input & { variant?: string };
@@ -35,14 +44,14 @@ export type FieldName = keyof BookingInput;
 
 /** Keys of `content.form.errors`. Kept in sync by the Content type in schema.ts. */
 export type ErrorKey =
-  | 'dateTimeRequired'
+  | 'dateRequired'
+  | 'timeRequired'
+  | 'timePassed'
   | 'guestsInvalid'
   | 'offerRequired'
   | 'nameRequired'
   | 'phoneRequired'
-  | 'phoneInvalid'
-  | 'emailInvalid'
-  | 'consentRequired';
+  | 'phoneInvalid';
 
 export type FieldErrors = Partial<Record<FieldName, ErrorKey>>;
 
@@ -53,8 +62,8 @@ export interface Validated {
   offer: OfferId;
   name: string;
   phone: string; // E.164, e.g. +971509144215
-  email: string | null;
   notes: string | null;
+  /** Consent is given by submitting — the note under the button says so. Recorded with the request. */
   consent: true;
   variant: HeroVariantId | null;
 }
@@ -71,9 +80,7 @@ export const GUESTS_MAX = 20;
 // ---------------------------------------------------------------------------
 
 const E164_RE = /^\+[1-9]\d{7,14}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const TIME_RE = /^\d{2}:\d{2}$/;
 
 /**
  * "+971 50 914 4215" / "00971509144215" / "0509144215" → "+971509144215".
@@ -88,36 +95,55 @@ export function normalizePhone(raw: string): string | null {
   return E164_RE.test(s) ? s : null;
 }
 
-function isTruthyConsent(v: boolean | string | undefined): boolean {
-  return v === true || v === 'on' || v === 'true' || v === '1';
+/** Wall clock in the restaurant's zone: { date: YYYY-MM-DD, time: HH:MM }. Injectable for tests. */
+export function nowInRestaurantZone(now: Date = new Date()): { date: string; time: string } {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: RESTAURANT_TZ,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+  // en-GB renders midnight as "24" in some engines.
+  const hour = get('hour') === '24' ? '00' : get('hour');
+  return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${hour}:${get('minute')}` };
 }
 
-/** Today's date as YYYY-MM-DD in the runtime's local zone. Injectable for tests. */
+/** Today's date as YYYY-MM-DD in the restaurant's zone. */
 export function todayIso(now: Date = new Date()): string {
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return nowInRestaurantZone(now).date;
+}
+
+/** `date` plus `days` as YYYY-MM-DD. Pure calendar arithmetic, zone-free. */
+export function addDaysIso(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number);
+  const t = new Date(Date.UTC(y!, m! - 1, d! + days));
+  return t.toISOString().slice(0, 10);
+}
+
+/** True when `slot` is still requestable on `date` at the given restaurant wall clock. */
+export function isSlotOpen(date: string, slot: string, now = nowInRestaurantZone()): boolean {
+  if (date > now.date) return true;
+  if (date < now.date) return false;
+  return slot > now.time;
 }
 
 // ---------------------------------------------------------------------------
 // Validators
 // ---------------------------------------------------------------------------
 
-export function validateStep1(input: Step1Input, today: string = todayIso()): FieldErrors {
+export function validateStep1(input: Step1Input, now = nowInRestaurantZone()): FieldErrors {
   const errors: FieldErrors = {};
 
   const date = String(input.date ?? '').trim();
   const time = String(input.time ?? '').trim();
-  const dateOk = DATE_RE.test(date) && date >= today;
-  if (!dateOk || !TIME_RE.test(time)) errors.date = 'dateTimeRequired';
+  if (!DATE_RE.test(date) || date < now.date) errors.date = 'dateRequired';
+  else if (!TIME_SLOTS.includes(time)) errors.time = 'timeRequired';
+  else if (!isSlotOpen(date, time, now)) errors.time = 'timePassed';
 
   const guests = Number(input.guests);
   if (!Number.isInteger(guests) || guests < GUESTS_MIN || guests > GUESTS_MAX) {
     errors.guests = 'guestsInvalid';
   }
-
-  if (!OFFER_IDS.includes(input.offer as OfferId)) errors.offer = 'offerRequired';
 
   return errors;
 }
@@ -131,17 +157,14 @@ export function validateStep2(input: Step2Input): FieldErrors {
   if (!phoneRaw) errors.phone = 'phoneRequired';
   else if (!normalizePhone(phoneRaw)) errors.phone = 'phoneInvalid';
 
-  const email = String(input.email ?? '').trim();
-  if (email && !EMAIL_RE.test(email)) errors.email = 'emailInvalid';
-
-  if (!isTruthyConsent(input.consent)) errors.consent = 'consentRequired';
+  if (!OFFER_IDS.includes(input.offer as OfferId)) errors.offer = 'offerRequired';
 
   return errors;
 }
 
 /** Full check. On success returns a normalised payload ready for the server. */
-export function validateBooking(input: BookingInput, today: string = todayIso()): ValidationResult {
-  const errors: FieldErrors = { ...validateStep1(input, today), ...validateStep2(input) };
+export function validateBooking(input: BookingInput, now = nowInRestaurantZone()): ValidationResult {
+  const errors: FieldErrors = { ...validateStep1(input, now), ...validateStep2(input) };
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   const variant = String(input.variant ?? '');
@@ -154,7 +177,6 @@ export function validateBooking(input: BookingInput, today: string = todayIso())
       offer: input.offer as OfferId,
       name: input.name.trim(),
       phone: normalizePhone(input.phone)!,
-      email: String(input.email ?? '').trim() || null,
       notes: String(input.notes ?? '').trim().slice(0, 500) || null,
       consent: true,
       variant: variant === 'view' || variant === 'business' || variant === 'price' ? variant : null,

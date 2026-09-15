@@ -1,19 +1,26 @@
 ---
 import Section from '@/components/Section.astro';
-import { content, finalText, DRAFT } from '@/content/schema';
+import { content, DRAFT } from '@/content/schema';
 import { whatsappHref } from '@/lib/links';
-import { GUESTS_MIN, GUESTS_MAX } from '@/lib/validation';
+import { GUESTS_MIN, GUESTS_MAX, TIME_SLOTS } from '@/lib/validation';
 
 const { form, thanks, footer, links } = content;
 const { step1, step2, progress, whatsappBlock } = form;
-const timeHelper = finalText(step1.fields.time.helper);
 const waHref = whatsappHref(footer.phone, whatsappBlock.prefilledMessage);
+
+/** "14:30" → "2:30 PM". Display only; the value stays HH:MM. */
+const slotLabel = (slot: string) => {
+  const [h, m] = slot.split(':').map(Number);
+  const hour12 = h! % 12 || 12;
+  return `${hour12}:${String(m).padStart(2, '0')} ${h! < 12 ? 'AM' : 'PM'}`;
+};
+const slots = TIME_SLOTS.map((value) => ({ value, label: slotLabel(value) }));
 
 // Everything the client script needs from content, as one JSON island.
 // Keeps copy out of the script and the whole content file out of the bundle.
 const clientConfig = JSON.stringify({
   errors: form.errors,
-  offerLabels: Object.fromEntries(step1.fields.offer.options.map((o) => [o.value, o.label])),
+  offerLabels: Object.fromEntries(step2.fields.offer.options.map((o) => [o.value, o.label])),
   summaryTemplate: thanks.summaryTemplate,
   ctaLoading: step2.ctaLoading,
   cta: step2.cta,
@@ -25,6 +32,9 @@ const labelClass = 'block text-small font-medium';
 const errorClass = 'mt-1 text-small text-error';
 const primaryBtn =
   'inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-accent px-6 text-body font-medium text-accent-ink disabled:opacity-60';
+// Pill-shaped choice: a button or a label wrapping a hidden radio. Selected state via aria-pressed / :checked.
+const pillClass =
+  'inline-flex min-h-[44px] cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-pill border border-line bg-surface px-3 text-body transition-colors aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-white has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-white disabled:cursor-not-allowed disabled:opacity-40';
 ---
 
 <Section id="booking" heading={form.heading} sub={form.sub}>
@@ -39,36 +49,41 @@ const primaryBtn =
       <p class="text-small text-muted">{progress.step1}</p>
       <legend class="mt-1 text-h3">{step1.heading}</legend>
 
-      <div class="mt-5 grid grid-cols-2 gap-4">
-        <div class="col-span-2">
-          <label for="f-date" class={labelClass}>{step1.fields.date.label}</label>
-          <input id="f-date" name="date" type="date" class={inputClass} autocomplete="off" aria-describedby="e-date" />
-          <p id="e-date" class={errorClass} data-error-for="date" hidden></p>
+      <!-- Date: Today / Tomorrow / Pick a date. The native input is the single
+           source of the value; quick picks just fill it and stay hidden. -->
+      <fieldset class="mt-5 border-0 p-0" data-date-group>
+        <legend class={labelClass}>{step1.fields.date.label}</legend>
+        <div class="mt-2 flex flex-wrap gap-2" role="group">
+          <button type="button" class={pillClass} data-date-quick="today" aria-pressed="false">{step1.fields.date.quick.today}</button>
+          <button type="button" class={pillClass} data-date-quick="tomorrow" aria-pressed="false">{step1.fields.date.quick.tomorrow}</button>
+          <button type="button" class={pillClass} data-date-quick="pick" aria-pressed="false">{step1.fields.date.quick.pick}</button>
         </div>
-        <div>
-          <label for="f-time" class={labelClass}>{step1.fields.time.label}</label>
-          <input id="f-time" name="time" type="time" step="900" class={inputClass} autocomplete="off" data-error-target="date" />
-          {timeHelper && <p class="mt-1 text-small text-muted">{timeHelper}</p>}
-        </div>
-        <div>
-          <label for="f-guests" class={labelClass}>{step1.fields.guests.label}</label>
-          <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value="2" inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" />
-          <p id="e-guests" class={errorClass} data-error-for="guests" hidden></p>
-        </div>
-      </div>
+        <p class="mt-2 text-small text-muted" data-today-closed hidden>{step1.fields.date.todayClosed}</p>
+        <label for="f-date" class="sr-only">{step1.fields.date.label}</label>
+        <input id="f-date" name="date" type="date" class={inputClass} autocomplete="off" aria-describedby="e-date" hidden />
+        <p id="e-date" class={errorClass} data-error-for="date" hidden></p>
+      </fieldset>
 
-      <fieldset class="mt-5 border-0 p-0">
-        <legend class={labelClass}>{step1.fields.offer.label}</legend>
-        <div class="mt-2 grid gap-2">
-          {step1.fields.offer.options.map((opt) => (
-            <label class="flex min-h-[48px] cursor-pointer items-center gap-3 rounded-card border border-line px-4 has-[:checked]:border-accent">
-              <input type="radio" name="offer" value={opt.value} checked={opt.default} class="h-5 w-5 accent-accent" />
-              <span class="text-body">{opt.label}</span>
+      <!-- Time: one pill per seating from TIME_SLOTS. Radios, so the value
+           travels with the form and keyboard/screen-reader users get a group. -->
+      <fieldset class="mt-5 border-0 p-0" data-time-group>
+        <legend class={labelClass}>{step1.fields.time.label}</legend>
+        <div class="mt-2 grid grid-cols-3 gap-2">
+          {slots.map((s) => (
+            <label class={pillClass} data-slot={s.value}>
+              <input type="radio" name="time" value={s.value} class="sr-only" />
+              <span>{s.label}</span>
             </label>
           ))}
         </div>
-        <p class={errorClass} data-error-for="offer" hidden></p>
+        <p class={errorClass} data-error-for="time" hidden></p>
       </fieldset>
+
+      <div class="mt-5">
+        <label for="f-guests" class={labelClass}>{step1.fields.guests.label}</label>
+        <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value="2" inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" />
+        <p id="e-guests" class={errorClass} data-error-for="guests" hidden></p>
+      </div>
 
       <button type="button" class:list={['mt-6', primaryBtn]} data-step-next>
         {step1.cta}
@@ -94,34 +109,34 @@ const primaryBtn =
           {step2.fields.phone.helper && <p id="h-phone" class="mt-1 text-small text-muted">{step2.fields.phone.helper}</p>}
           <p id="e-phone" class={errorClass} data-error-for="phone" hidden></p>
         </div>
-        <div>
-          <label for="f-email" class={labelClass}>
-            {step2.fields.email.label}
-            {step2.fields.email.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.email.optionalSuffix}</span>}
-          </label>
-          <input id="f-email" name="email" type="email" inputmode="email" placeholder={step2.fields.email.placeholder} autocomplete="email" class={inputClass} aria-describedby="e-email" />
-          <p id="e-email" class={errorClass} data-error-for="email" hidden></p>
-        </div>
-        <div>
-          <label for="f-notes" class={labelClass}>
-            {step2.fields.notes.label}
-            {step2.fields.notes.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.notes.optionalSuffix}</span>}
-          </label>
+
+        <!-- Offer: preselected, one tap to switch. Asked after contact, not before. -->
+        <fieldset class="border-0 p-0">
+          <legend class={labelClass}>{step2.fields.offer.label}</legend>
+          <div class="mt-2 grid gap-2">
+            {step2.fields.offer.options.map((opt) => (
+              <label class={pillClass}>
+                <input type="radio" name="offer" value={opt.value} checked={opt.default} class="sr-only" />
+                <span>{opt.label}</span>
+              </label>
+            ))}
+          </div>
+          <p class={errorClass} data-error-for="offer" hidden></p>
+        </fieldset>
+
+        <!-- Notes: collapsed until wanted. Opens itself if there is text (e.g. after back/forward). -->
+        <details data-notes>
+          <summary class="inline-flex min-h-[44px] items-center text-small font-medium underline underline-offset-4">{step2.fields.notes.toggle}</summary>
+          <label for="f-notes" class:list={['mt-2', labelClass]}>{step2.fields.notes.label}</label>
           <textarea id="f-notes" name="notes" rows="3" maxlength="500" placeholder={step2.fields.notes.placeholder} class={`${inputClass} h-auto py-3`} autocomplete="off"></textarea>
-        </div>
-        <div>
-          <label class="flex min-h-[44px] cursor-pointer items-start gap-3">
-            <input type="checkbox" name="consent" class="mt-1 h-5 w-5 shrink-0 accent-accent" required={step2.fields.consent.required} aria-describedby="e-consent" />
-            <span class="text-small">{step2.fields.consent.label}</span>
-          </label>
-          <p id="e-consent" class={errorClass} data-error-for="consent" hidden></p>
-        </div>
+        </details>
       </div>
 
       <button type="submit" class:list={['mt-6', primaryBtn]} data-submit>
         {step2.cta}
       </button>
-      <p class="mt-3 text-small text-muted">{step2.microcopy}</p>
+      <p class="mt-3 text-small text-muted">{step2.consentNote}</p>
+      <p class="mt-2 text-small text-muted">{step2.microcopy}</p>
     </fieldset>
   </form>
 
@@ -137,6 +152,7 @@ const primaryBtn =
         </li>
       ))}
     </ol>
+    <p class="mt-4 text-small text-muted">{thanks.ifUnavailable}</p>
     <a href={whatsappHref(footer.phone)} target="_blank" rel="noopener" class:list={['mt-6', primaryBtn]} data-cta="whatsapp">
       {thanks.cta}
     </a>
@@ -163,7 +179,9 @@ const primaryBtn =
     validateStep1,
     validateStep2,
     validateBooking,
-    todayIso,
+    nowInRestaurantZone,
+    addDaysIso,
+    isSlotOpen,
     type FieldErrors,
     type ErrorKey,
   } from '@/lib/validation';
@@ -190,9 +208,72 @@ const primaryBtn =
     // Which hero variant the visitor saw — travels with the request.
     if (variantField) variantField.value = document.documentElement.dataset.variant ?? '';
 
-    // No past dates.
-    const dateInput = form.querySelector<HTMLInputElement>('[name="date"]');
-    if (dateInput) dateInput.min = todayIso();
+    // --- Date: quick picks fill the native input; "Pick a date" reveals it. ---
+    const dateInput = form.querySelector<HTMLInputElement>('[name="date"]')!;
+    const quickBtns = Array.from(form.querySelectorAll<HTMLButtonElement>('[data-date-quick]'));
+    const todayClosedNote = form.querySelector<HTMLElement>('[data-today-closed]');
+    const slotLabels = Array.from(form.querySelectorAll<HTMLLabelElement>('[data-slot]'));
+    const lastSlot = slotLabels[slotLabels.length - 1]?.dataset.slot ?? '';
+
+    const setQuick = (which: string | null) => {
+      quickBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dateQuick === which)));
+    };
+
+    // Slots already gone today are disabled; a disabled selected slot is unselected.
+    const refreshSlots = () => {
+      const now = nowInRestaurantZone();
+      for (const label of slotLabels) {
+        const radio = label.querySelector<HTMLInputElement>('input')!;
+        const open = !dateInput.value || isSlotOpen(dateInput.value, radio.value, now);
+        radio.disabled = !open;
+        label.classList.toggle('opacity-40', !open);
+        label.classList.toggle('cursor-not-allowed', !open);
+        if (!open && radio.checked) radio.checked = false;
+      }
+    };
+
+    // "Today" only while a seating is still ahead in the restaurant's zone.
+    const refreshToday = () => {
+      const now = nowInRestaurantZone();
+      const todayBtn = quickBtns.find((b) => b.dataset.dateQuick === 'today');
+      const closed = !isSlotOpen(now.date, lastSlot, now);
+      if (todayBtn) todayBtn.disabled = closed;
+      if (todayClosedNote) todayClosedNote.hidden = !closed;
+      dateInput.min = now.date;
+      return { now, closed };
+    };
+
+    quickBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const which = btn.dataset.dateQuick!;
+        const { now } = refreshToday();
+        if (which === 'pick') {
+          dateInput.hidden = false;
+          dateInput.focus();
+          try { dateInput.showPicker?.(); } catch { /* not supported / needs gesture — the input is visible anyway */ }
+        } else {
+          dateInput.hidden = true;
+          dateInput.value = which === 'today' ? now.date : addDaysIso(now.date, 1);
+          dateInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        setQuick(which);
+        refreshSlots();
+      }),
+    );
+
+    // Typing/choosing a date in the native input keeps "Pick a date" pressed.
+    dateInput.addEventListener('input', () => {
+      if (!dateInput.hidden) setQuick('pick');
+      refreshSlots();
+    });
+
+    refreshToday();
+    refreshSlots();
+
+    // --- Notes: open the disclosure if it already holds text. ---
+    const notes = form.querySelector<HTMLDetailsElement>('[data-notes]');
+    const notesField = form.querySelector<HTMLTextAreaElement>('[name="notes"]');
+    if (notes && notesField?.value.trim()) notes.open = true;
 
     const read = () => {
       const fd = new FormData(form);
@@ -203,9 +284,7 @@ const primaryBtn =
         offer: String(fd.get('offer') ?? ''),
         name: String(fd.get('name') ?? ''),
         phone: String(fd.get('phone') ?? ''),
-        email: String(fd.get('email') ?? ''),
         notes: String(fd.get('notes') ?? ''),
-        consent: fd.get('consent') === 'on',
         variant: String(fd.get('variant') ?? ''),
       };
     };
@@ -220,14 +299,18 @@ const primaryBtn =
           msg.textContent = cfg.errors[key];
           msg.hidden = false;
         }
-        // Inputs that own the message, plus ones that share it (time → date).
         scope
-          .querySelectorAll<HTMLElement>(`[name="${field}"], [data-error-target="${field}"]`)
+          .querySelectorAll<HTMLElement>(`[name="${field}"]`)
           .forEach((el) => el.setAttribute('aria-invalid', 'true'));
+        // Focus the first visible control for the field (radio groups: the group's fieldset).
         const input = scope.querySelector<HTMLElement>(`[name="${field}"]`);
-        if (!first && input) first = input;
+        const target = input && input.hidden ? input.closest<HTMLElement>('fieldset') : input;
+        if (!first && target) first = target;
       }
-      first?.focus({ preventScroll: false });
+      if (first) {
+        if (!first.hasAttribute('tabindex') && first.tagName === 'FIELDSET') first.tabIndex = -1;
+        first.focus({ preventScroll: false });
+      }
     };
 
     const clearErrors = (scope: HTMLElement) => {
@@ -240,13 +323,10 @@ const primaryBtn =
 
     // Clear a field's error as soon as the visitor edits it.
     form.addEventListener('input', (e) => {
-      const el = e.target as HTMLElement;
-      const name = el.getAttribute('data-error-target') ?? el.getAttribute('name');
+      const name = (e.target as HTMLElement).getAttribute('name');
       if (!name) return;
       form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)?.setAttribute('hidden', '');
-      form
-        .querySelectorAll(`[name="${name}"], [data-error-target="${name}"]`)
-        .forEach((i) => i.removeAttribute('aria-invalid'));
+      form.querySelectorAll(`[name="${name}"]`).forEach((i) => i.removeAttribute('aria-invalid'));
     });
 
     // --- Step switching ---
@@ -254,11 +334,11 @@ const primaryBtn =
       step1.hidden = n !== 1;
       step2.hidden = n !== 2;
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const target = n === 1 ? step1 : step2;
-      target.querySelector<HTMLElement>('input:not([type="hidden"]), textarea')?.focus({ preventScroll: true });
+      if (n === 2) step2.querySelector<HTMLElement>('input:not([type="hidden"])')?.focus({ preventScroll: true });
     };
 
     form.querySelector('[data-step-next]')?.addEventListener('click', () => {
+      refreshSlots();
       const errors = validateStep1(read());
       if (Object.keys(errors).length) return showErrors(step1, errors);
       showStep(2);
@@ -275,8 +355,9 @@ const primaryBtn =
 
       const result = validateBooking(input);
       if (!result.ok) {
-        // Step 1 went stale (e.g. date passed midnight) — send them back to it.
+        // Step 1 went stale (e.g. the chosen slot passed while typing) — send them back to it.
         showStep(1);
+        refreshSlots();
         return showErrors(step1, result.errors);
       }
 

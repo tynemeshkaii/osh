@@ -5,7 +5,6 @@
     "note": "All landing-page copy lives here. Never hardcode strings in components. Values wrapped in {{ }} are placeholders that MUST be replaced with real data before launch — see _placeholders."
   },
   "_placeholders": {
-    "LAST_SEATING": "5:30 PM or 6:00 PM",
     "ALT_TIME": "Filled at runtime by the availability response"
   },
   "draft": {
@@ -49,7 +48,9 @@
       "video": "/video/hero.mp4",
       "poster": "/img/hero-poster.webp",
       "alt": "The terrace at OSH Del Mar above Dubai Marina"
-    }
+    },
+    "ctaSecondary": "or message us on WhatsApp",
+    "whatsappMessage": "Hi OSH Del Mar — I'd like to request a lunch table."
   },
   "socialProof": {
     "heading": "People come back for the terrace",
@@ -127,29 +128,19 @@
       "heading": "When are you coming?",
       "fields": {
         "date": {
-          "label": "Date"
+          "label": "Date",
+          "quick": {
+            "today": "Today",
+            "tomorrow": "Tomorrow",
+            "pick": "Pick a date"
+          },
+          "todayClosed": "Today's last seating has passed — tomorrow?"
         },
         "time": {
-          "label": "Time",
-          "helper": "Last seating {{LAST_SEATING}}"
+          "label": "Time"
         },
         "guests": {
           "label": "Guests"
-        },
-        "offer": {
-          "label": "Which one?",
-          "options": [
-            {
-              "value": "set",
-              "label": "Four courses — 150 AED",
-              "default": true
-            },
-            {
-              "value": "alacarte",
-              "label": "20% off à la carte",
-              "default": false
-            }
-          ]
         }
       },
       "cta": "Continue"
@@ -168,39 +159,45 @@
           "placeholder": "+971 50 123 4567",
           "required": true
         },
-        "email": {
-          "label": "Email",
-          "optionalSuffix": "(optional)",
-          "placeholder": "you@email.com",
-          "required": false
+        "offer": {
+          "label": "Which lunch?",
+          "options": [
+            {
+              "value": "set",
+              "label": "Four courses — 150 AED",
+              "default": true
+            },
+            {
+              "value": "alacarte",
+              "label": "20% off à la carte",
+              "default": false
+            }
+          ]
         },
         "notes": {
           "label": "Anything we should know?",
-          "optionalSuffix": "(optional)",
+          "toggle": "Add a note (optional)",
           "placeholder": "Birthday, a table by the terrace rail, a high chair…",
           "required": false
-        },
-        "consent": {
-          "label": "I agree to be contacted about this reservation.",
-          "required": true
         }
       },
       "cta": "Request my table",
       "ctaLoading": "Sending…",
-      "microcopy": "No prepayment. We'll confirm on WhatsApp within 15 minutes — or first thing in the morning if it's after 11 PM."
+      "microcopy": "No prepayment. We'll confirm on WhatsApp within 15 minutes — or first thing in the morning if it's after 11 PM.",
+      "consentNote": "By requesting a table you agree to be contacted on WhatsApp about this reservation."
     },
     "errors": {
       "nameRequired": "We'll need a name for the table.",
       "phoneRequired": "We confirm on WhatsApp, so we need a number.",
       "phoneInvalid": "That number doesn't look right. Include the country code, like +971 50 123 4567.",
-      "emailInvalid": "That email looks off — check the spelling, or just leave it blank.",
-      "dateTimeRequired": "Pick a date and time first.",
       "guestsInvalid": "Guests: a number from 1 to 20. For bigger groups, message us on WhatsApp.",
       "offerRequired": "Pick one of the two lunch options.",
-      "consentRequired": "Tick the box so we're allowed to message you back.",
       "slotUnavailable": "That slot is full. The closest we have is {{ALT_TIME}} — or try another day.",
       "network": "That didn't go through. Check your connection and try again — everything you typed is still here.",
-      "server": "Something broke on our side. Message the host on WhatsApp and they'll sort it out right now."
+      "server": "Something broke on our side. Message the host on WhatsApp and they'll sort it out right now.",
+      "dateRequired": "Pick a date first.",
+      "timeRequired": "Pick a time.",
+      "timePassed": "That time has already passed today. Pick a later slot, or tomorrow."
     },
     "whatsappBlock": {
       "heading": "Something unusual?",
@@ -220,11 +217,12 @@
     ],
     "cta": "Open WhatsApp",
     "ctaMicrocopy": "Nothing has been charged. If plans change, just reply in that chat.",
-    "instagram": "Want to see what the terrace looks like tonight? @oshdubai"
+    "instagram": "Want to see what the terrace looks like tonight? @oshdubai",
+    "ifUnavailable": "If that time is full, the host will offer the closest one in the same message — nothing is booked until you say yes."
   },
   "stickyCta": {
-    "label": "Request your table",
-    "note": "Daily 2–6 PM"
+    "label": "Request my table",
+    "note": "★ 4.7 · No prepayment"
   },
   "links": {
     "instagram": {

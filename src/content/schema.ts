@@ -30,6 +30,9 @@ export interface Hero {
   cta: string;
   ctaAlternatives: string[];
   ctaMicrocopy: string;
+  /** Secondary hero CTA: opens WhatsApp with `whatsappMessage` prefilled. */
+  ctaSecondary: string;
+  whatsappMessage: string;
   trustStrip: string[];
 }
 
@@ -80,13 +83,24 @@ export interface OfferField extends FieldBase {
   options: OfferOption[];
 }
 
+export interface DateField extends FieldBase {
+  /** Quick picks shown before the native date input. */
+  quick: { today: string; tomorrow: string; pick: string };
+  /** Shown when the last seating of today has already passed. */
+  todayClosed: string;
+}
+
+export interface NotesField extends FieldBase {
+  /** Summary line of the collapsed <details>; the field opens on tap. */
+  toggle: string;
+}
+
 export interface FormStep1 {
   heading: string;
   fields: {
-    date: FieldBase;
+    date: DateField;
     time: FieldBase;
     guests: FieldBase;
-    offer: OfferField;
   };
   cta: string;
 }
@@ -96,12 +110,13 @@ export interface FormStep2 {
   fields: {
     name: FieldBase;
     phone: FieldBase;
-    email: FieldBase;
-    notes: FieldBase;
-    consent: FieldBase;
+    offer: OfferField;
+    notes: NotesField;
   };
   cta: string;
   ctaLoading: string;
+  /** Consent by submission — replaces the checkbox. Sits directly under the submit button. */
+  consentNote: string;
   microcopy: string;
 }
 
@@ -109,11 +124,11 @@ export interface FormErrors {
   nameRequired: string;
   phoneRequired: string;
   phoneInvalid: string;
-  emailInvalid: string;
-  dateTimeRequired: string;
+  dateRequired: string;
+  timeRequired: string;
+  timePassed: string;
   guestsInvalid: string;
   offerRequired: string;
-  consentRequired: string;
   slotUnavailable: string;
   network: string;
   server: string;
@@ -142,6 +157,8 @@ export interface Thanks {
   h1: string;
   summaryTemplate: string;
   steps: string[];
+  /** What happens when the requested slot is full. */
+  ifUnavailable: string;
   cta: string;
   ctaMicrocopy: string;
   instagram: string;
@@ -222,9 +239,9 @@ function parseContent(shape: Loose<Content>): Content {
   for (const id of HERO_VARIANTS) {
     if (!(id in hero.variants)) throw new Error(`content.hero.variants: missing "${id}"`);
   }
-  for (const opt of form.step1.fields.offer.options) {
+  for (const opt of form.step2.fields.offer.options) {
     if (!isOneOf(OFFER_IDS, opt.value)) {
-      throw new Error(`content.form.step1.fields.offer.options: unknown value "${opt.value}"`);
+      throw new Error(`content.form.step2.fields.offer.options: unknown value "${opt.value}"`);
     }
   }
   return shape as Content;

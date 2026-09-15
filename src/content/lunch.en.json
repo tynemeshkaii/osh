@@ -314,6 +314,8 @@
       "phoneInvalid": "That number doesn't look right. Include the country code, like +971 50 123 4567.",
       "emailInvalid": "That email looks off — check the spelling, or just leave it blank.",
       "dateTimeRequired": "Pick a date and time first.",
+      "guestsInvalid": "Guests: a number from 1 to 20. For bigger groups, message us on WhatsApp.",
+      "offerRequired": "Pick one of the two lunch options.",
       "consentRequired": "Tick the box so we're allowed to message you back.",
       "slotUnavailable": "That slot is full. The closest we have is {{ALT_TIME}} — or try another day.",
       "network": "That didn't go through. Check your connection and try again — everything you typed is still here.",
@@ -324,7 +326,8 @@
       "body": "A table for twelve, a birthday, a question about the terrace — talk to the host directly.",
       "cta": "Message us on WhatsApp",
       "prefilledMessage": "Hi OSH Del Mar — I'd like to ask about a lunch table."
-    }
+    },
+    "thanksNote": "Draft: nothing was sent. The real request will go to the host once the backend is connected."
   },
   "thanks": {
     "h1": "Got it. The host is checking your table.",

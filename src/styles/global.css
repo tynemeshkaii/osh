@@ -13,6 +13,7 @@
   --color-accent-ink: var(--accent-ink);
   --color-line: var(--line);
   --color-overlay: var(--overlay);
+  --color-error: var(--error);
   --color-white: #ffffff;
   --color-transparent: transparent;
 

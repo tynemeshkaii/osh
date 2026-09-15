@@ -12,6 +12,7 @@
   --accent-ink: #ffffff;
   --line: #e6e1d9;
   --overlay: rgba(13, 15, 18, 0.45);
+  --error: #b3413a;
 
   --font-display: 'OSH Display', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
   --font-sans: 'OSH Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

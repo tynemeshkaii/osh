@@ -160,6 +160,8 @@ export interface FormErrors {
   phoneInvalid: string;
   emailInvalid: string;
   dateTimeRequired: string;
+  guestsInvalid: string;
+  offerRequired: string;
   consentRequired: string;
   slotUnavailable: string;
   network: string;
@@ -180,6 +182,8 @@ export interface Form {
   step1: FormStep1;
   step2: FormStep2;
   errors: FormErrors;
+  /** Draft-only line under the thank-you screen while there is no backend. */
+  thanksNote: string;
   whatsappBlock: WhatsappBlock;
 }
 

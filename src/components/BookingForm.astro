@@ -1,20 +1,37 @@
 ---
 import Section from '@/components/Section.astro';
-import { content, finalText } from '@/content/schema';
+import { content, finalText, DRAFT } from '@/content/schema';
 import { whatsappHref } from '@/lib/links';
+import { GUESTS_MIN, GUESTS_MAX } from '@/lib/validation';
 
-const { form, footer } = content;
+const { form, thanks, footer, links } = content;
 const { step1, step2, progress, whatsappBlock } = form;
 const timeHelper = finalText(step1.fields.time.helper);
 const waHref = whatsappHref(footer.phone, whatsappBlock.prefilledMessage);
 
+// Everything the client script needs from content, as one JSON island.
+// Keeps copy out of the script and the whole content file out of the bundle.
+const clientConfig = JSON.stringify({
+  errors: form.errors,
+  offerLabels: Object.fromEntries(step1.fields.offer.options.map((o) => [o.value, o.label])),
+  summaryTemplate: thanks.summaryTemplate,
+  ctaLoading: step2.ctaLoading,
+  cta: step2.cta,
+});
+
 const inputClass =
-  'mt-1 block h-12 w-full rounded-card border border-line bg-surface px-4 text-body outline-none focus:border-accent';
+  'mt-1 block h-12 w-full rounded-card border border-line bg-surface px-4 text-body outline-none focus:border-accent aria-[invalid=true]:border-error';
 const labelClass = 'block text-small font-medium';
+const errorClass = 'mt-1 text-small text-error';
+const primaryBtn =
+  'inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-accent px-6 text-body font-medium text-accent-ink disabled:opacity-60';
 ---
 
 <Section id="booking" heading={form.heading} sub={form.sub}>
-  <!-- Visual markup only. Step switching, validation and submit arrive in stage 5. -->
+  <!-- Draft flow: step 1 → step 2 → thank-you panel, all client-side.
+       Validation is the shared schema in src/lib/validation.ts.
+       Nothing is sent yet; the submit handler is where the fetch to the
+       Cloudflare Function will go. Field values are never cleared on error. -->
   <form id="booking-form" class="rounded-card border border-line bg-surface p-5 md:p-6" novalidate>
     <input type="hidden" name="variant" value="" data-variant-field />
 
@@ -25,16 +42,18 @@ const labelClass = 'block text-small font-medium';
       <div class="mt-5 grid grid-cols-2 gap-4">
         <div class="col-span-2">
           <label for="f-date" class={labelClass}>{step1.fields.date.label}</label>
-          <input id="f-date" name="date" type="date" class={inputClass} autocomplete="off" />
+          <input id="f-date" name="date" type="date" class={inputClass} autocomplete="off" aria-describedby="e-date" />
+          <p id="e-date" class={errorClass} data-error-for="date" hidden></p>
         </div>
         <div>
           <label for="f-time" class={labelClass}>{step1.fields.time.label}</label>
-          <input id="f-time" name="time" type="time" step="900" class={inputClass} autocomplete="off" />
+          <input id="f-time" name="time" type="time" step="900" class={inputClass} autocomplete="off" data-error-target="date" />
           {timeHelper && <p class="mt-1 text-small text-muted">{timeHelper}</p>}
         </div>
         <div>
           <label for="f-guests" class={labelClass}>{step1.fields.guests.label}</label>
-          <input id="f-guests" name="guests" type="number" min="1" max="20" value="2" inputmode="numeric" class={inputClass} autocomplete="off" />
+          <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value="2" inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" />
+          <p id="e-guests" class={errorClass} data-error-for="guests" hidden></p>
         </div>
       </div>
 
@@ -48,16 +67,15 @@ const labelClass = 'block text-small font-medium';
             </label>
           ))}
         </div>
+        <p class={errorClass} data-error-for="offer" hidden></p>
       </fieldset>
 
-      <button type="button" class="mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-ink px-6 text-body font-medium text-white" data-step-next>
+      <button type="button" class:list={['mt-6', primaryBtn]} data-step-next>
         {step1.cta}
       </button>
     </fieldset>
 
-    <hr class="my-8 border-line" />
-
-    <fieldset data-step="2" class="border-0 p-0">
+    <fieldset data-step="2" class="border-0 p-0" hidden>
       <div class="flex items-baseline justify-between">
         <p class="text-small text-muted">{progress.step2}</p>
         <button type="button" class="min-h-[44px] text-small font-medium underline" data-step-back>{progress.back}</button>
@@ -67,39 +85,67 @@ const labelClass = 'block text-small font-medium';
       <div class="mt-5 grid gap-4">
         <div>
           <label for="f-name" class={labelClass}>{step2.fields.name.label}</label>
-          <input id="f-name" name="name" type="text" placeholder={step2.fields.name.placeholder} autocomplete="name" class={inputClass} required={step2.fields.name.required} />
+          <input id="f-name" name="name" type="text" placeholder={step2.fields.name.placeholder} autocomplete="name" class={inputClass} required={step2.fields.name.required} aria-describedby="e-name" />
+          <p id="e-name" class={errorClass} data-error-for="name" hidden></p>
         </div>
         <div>
           <label for="f-phone" class={labelClass}>{step2.fields.phone.label}</label>
-          <input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder={step2.fields.phone.placeholder} autocomplete="tel" class={inputClass} required={step2.fields.phone.required} />
-          {step2.fields.phone.helper && <p class="mt-1 text-small text-muted">{step2.fields.phone.helper}</p>}
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" placeholder={step2.fields.phone.placeholder} autocomplete="tel" class={inputClass} required={step2.fields.phone.required} aria-describedby="e-phone h-phone" />
+          {step2.fields.phone.helper && <p id="h-phone" class="mt-1 text-small text-muted">{step2.fields.phone.helper}</p>}
+          <p id="e-phone" class={errorClass} data-error-for="phone" hidden></p>
         </div>
         <div>
           <label for="f-email" class={labelClass}>
             {step2.fields.email.label}
             {step2.fields.email.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.email.optionalSuffix}</span>}
           </label>
-          <input id="f-email" name="email" type="email" inputmode="email" placeholder={step2.fields.email.placeholder} autocomplete="email" class={inputClass} />
+          <input id="f-email" name="email" type="email" inputmode="email" placeholder={step2.fields.email.placeholder} autocomplete="email" class={inputClass} aria-describedby="e-email" />
+          <p id="e-email" class={errorClass} data-error-for="email" hidden></p>
         </div>
         <div>
           <label for="f-notes" class={labelClass}>
             {step2.fields.notes.label}
             {step2.fields.notes.optionalSuffix && <span class="font-normal text-muted"> {step2.fields.notes.optionalSuffix}</span>}
           </label>
-          <textarea id="f-notes" name="notes" rows="3" placeholder={step2.fields.notes.placeholder} class={`${inputClass} h-auto py-3`} autocomplete="off"></textarea>
+          <textarea id="f-notes" name="notes" rows="3" maxlength="500" placeholder={step2.fields.notes.placeholder} class={`${inputClass} h-auto py-3`} autocomplete="off"></textarea>
         </div>
-        <label class="flex min-h-[44px] cursor-pointer items-start gap-3">
-          <input type="checkbox" name="consent" class="mt-1 h-5 w-5 shrink-0 accent-accent" required={step2.fields.consent.required} />
-          <span class="text-small">{step2.fields.consent.label}</span>
-        </label>
+        <div>
+          <label class="flex min-h-[44px] cursor-pointer items-start gap-3">
+            <input type="checkbox" name="consent" class="mt-1 h-5 w-5 shrink-0 accent-accent" required={step2.fields.consent.required} aria-describedby="e-consent" />
+            <span class="text-small">{step2.fields.consent.label}</span>
+          </label>
+          <p id="e-consent" class={errorClass} data-error-for="consent" hidden></p>
+        </div>
       </div>
 
-      <button type="submit" class="mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-pill bg-accent px-6 text-body font-medium text-accent-ink" data-submit data-loading-label={step2.ctaLoading}>
+      <button type="submit" class:list={['mt-6', primaryBtn]} data-submit>
         {step2.cta}
       </button>
       <p class="mt-3 text-small text-muted">{step2.microcopy}</p>
     </fieldset>
   </form>
+
+  <!-- Thank-you panel replaces the form in place after a successful submit. -->
+  <div id="booking-thanks" class="rounded-card border border-line bg-surface p-5 md:p-6" hidden tabindex="-1">
+    <h3 class="text-h3">{thanks.h1}</h3>
+    <p class="mt-2 text-body font-medium" data-thanks-summary></p>
+    <ol class="mt-5 grid gap-3 text-body text-muted">
+      {thanks.steps.map((step, i) => (
+        <li class="flex gap-3">
+          <span class="w-5 shrink-0 text-accent" aria-hidden="true">{i + 1}.</span>
+          <span>{step}</span>
+        </li>
+      ))}
+    </ol>
+    <a href={whatsappHref(footer.phone)} target="_blank" rel="noopener" class:list={['mt-6', primaryBtn]} data-cta="whatsapp">
+      {thanks.cta}
+    </a>
+    <p class="mt-3 text-small text-muted">{thanks.ctaMicrocopy}</p>
+    <p class="mt-4 text-small text-muted">
+      <a href={links.instagram.url} target="_blank" rel="noopener" class="underline underline-offset-4" data-cta="instagram">{thanks.instagram}</a>
+    </p>
+    {DRAFT && <p class="mt-4 text-small text-muted">{form.thanksNote}</p>}
+  </div>
 
   <aside class="mt-6 rounded-card border border-line p-5">
     <h3 class="text-h3">{whatsappBlock.heading}</h3>
@@ -108,9 +154,167 @@ const labelClass = 'block text-small font-medium';
       {whatsappBlock.cta}
     </a>
   </aside>
+
+  <script is:inline type="application/json" id="booking-config" set:html={clientConfig} />
 </Section>
 
 <script>
-  // Stage 1: no submission yet — keep the page from reloading on Enter/submit.
-  document.getElementById('booking-form')?.addEventListener('submit', (e) => e.preventDefault());
+  import {
+    validateStep1,
+    validateStep2,
+    validateBooking,
+    todayIso,
+    type FieldErrors,
+    type ErrorKey,
+  } from '@/lib/validation';
+
+  interface Config {
+    errors: Record<ErrorKey, string>;
+    offerLabels: Record<string, string>;
+    summaryTemplate: string;
+    ctaLoading: string;
+    cta: string;
+  }
+
+  const form = document.getElementById('booking-form') as HTMLFormElement | null;
+  const thanksPanel = document.getElementById('booking-thanks');
+  const configEl = document.getElementById('booking-config');
+  if (form && thanksPanel && configEl) init(form, thanksPanel, JSON.parse(configEl.textContent ?? '{}') as Config);
+
+  function init(form: HTMLFormElement, thanksPanel: HTMLElement, cfg: Config) {
+    const step1 = form.querySelector<HTMLFieldSetElement>('[data-step="1"]')!;
+    const step2 = form.querySelector<HTMLFieldSetElement>('[data-step="2"]')!;
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const variantField = form.querySelector<HTMLInputElement>('[data-variant-field]');
+
+    // Which hero variant the visitor saw — travels with the request.
+    if (variantField) variantField.value = document.documentElement.dataset.variant ?? '';
+
+    // No past dates.
+    const dateInput = form.querySelector<HTMLInputElement>('[name="date"]');
+    if (dateInput) dateInput.min = todayIso();
+
+    const read = () => {
+      const fd = new FormData(form);
+      return {
+        date: String(fd.get('date') ?? ''),
+        time: String(fd.get('time') ?? ''),
+        guests: String(fd.get('guests') ?? ''),
+        offer: String(fd.get('offer') ?? ''),
+        name: String(fd.get('name') ?? ''),
+        phone: String(fd.get('phone') ?? ''),
+        email: String(fd.get('email') ?? ''),
+        notes: String(fd.get('notes') ?? ''),
+        consent: fd.get('consent') === 'on',
+        variant: String(fd.get('variant') ?? ''),
+      };
+    };
+
+    // --- Errors: shown next to the field, never touching its value. ---
+    const showErrors = (scope: HTMLElement, errors: FieldErrors) => {
+      clearErrors(scope);
+      let first: HTMLElement | null = null;
+      for (const [field, key] of Object.entries(errors) as [string, ErrorKey][]) {
+        const msg = scope.querySelector<HTMLElement>(`[data-error-for="${field}"]`);
+        if (msg) {
+          msg.textContent = cfg.errors[key];
+          msg.hidden = false;
+        }
+        // Inputs that own the message, plus ones that share it (time → date).
+        scope
+          .querySelectorAll<HTMLElement>(`[name="${field}"], [data-error-target="${field}"]`)
+          .forEach((el) => el.setAttribute('aria-invalid', 'true'));
+        const input = scope.querySelector<HTMLElement>(`[name="${field}"]`);
+        if (!first && input) first = input;
+      }
+      first?.focus({ preventScroll: false });
+    };
+
+    const clearErrors = (scope: HTMLElement) => {
+      scope.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
+        el.hidden = true;
+        el.textContent = '';
+      });
+      scope.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    };
+
+    // Clear a field's error as soon as the visitor edits it.
+    form.addEventListener('input', (e) => {
+      const el = e.target as HTMLElement;
+      const name = el.getAttribute('data-error-target') ?? el.getAttribute('name');
+      if (!name) return;
+      form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)?.setAttribute('hidden', '');
+      form
+        .querySelectorAll(`[name="${name}"], [data-error-target="${name}"]`)
+        .forEach((i) => i.removeAttribute('aria-invalid'));
+    });
+
+    // --- Step switching ---
+    const showStep = (n: 1 | 2) => {
+      step1.hidden = n !== 1;
+      step2.hidden = n !== 2;
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const target = n === 1 ? step1 : step2;
+      target.querySelector<HTMLElement>('input:not([type="hidden"]), textarea')?.focus({ preventScroll: true });
+    };
+
+    form.querySelector('[data-step-next]')?.addEventListener('click', () => {
+      const errors = validateStep1(read());
+      if (Object.keys(errors).length) return showErrors(step1, errors);
+      showStep(2);
+    });
+
+    form.querySelector('[data-step-back]')?.addEventListener('click', () => showStep(1));
+
+    // Offer card CTAs preselect the matching radio on the way to the form.
+    document.querySelectorAll<HTMLElement>('[data-select-offer]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const radio = form.querySelector<HTMLInputElement>(`[name="offer"][value="${el.dataset.selectOffer}"]`);
+        if (radio) radio.checked = true;
+      });
+    });
+
+    // --- Submit ---
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = read();
+      const step2Errors = validateStep2(input);
+      if (Object.keys(step2Errors).length) return showErrors(step2, step2Errors);
+
+      const result = validateBooking(input);
+      if (!result.ok) {
+        // Step 1 went stale (e.g. date passed midnight) — send them back to it.
+        showStep(1);
+        return showErrors(step1, result.errors);
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = cfg.ctaLoading;
+      try {
+        // TODO(backend): POST result.value to the Cloudflare Function here.
+        // Until then the draft simulates a short round-trip.
+        await new Promise((r) => setTimeout(r, 600));
+        showThanks(result.value);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = cfg.cta;
+      }
+    });
+
+    const showThanks = (v: { guests: number; date: string; time: string; offer: string }) => {
+      const date = new Date(`${v.date}T${v.time}:00`);
+      const summary = cfg.summaryTemplate
+        .replace('{{GUESTS}}', String(v.guests))
+        .replace('{{DATE}}', date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }))
+        .replace('{{TIME}}', date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }))
+        .replace('{{OFFER}}', cfg.offerLabels[v.offer] ?? v.offer);
+      const summaryEl = thanksPanel.querySelector<HTMLElement>('[data-thanks-summary]');
+      if (summaryEl) summaryEl.textContent = summary;
+
+      form.hidden = true;
+      thanksPanel.hidden = false;
+      thanksPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      thanksPanel.focus({ preventScroll: true });
+    };
+  }
 </script>

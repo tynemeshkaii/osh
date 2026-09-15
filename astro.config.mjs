@@ -6,6 +6,9 @@ import tailwindcss from '@tailwindcss/vite';
 // Both come from env so the same code builds for either target.
 const site = process.env.SITE_URL;
 const base = process.env.BASE_PATH ?? '/';
+// DRAFT=true renders unreplaced {{PLACEHOLDER}}s as visible "TBD" markers and
+// shows the draft banner. Off for real traffic. Injected at build time.
+const draft = process.env.DRAFT === 'true';
 
 export default defineConfig({
   output: 'static',
@@ -13,5 +16,6 @@ export default defineConfig({
   base,
   vite: {
     plugins: [tailwindcss()],
+    define: { 'import.meta.env.DRAFT': JSON.stringify(String(draft)) },
   },
 });

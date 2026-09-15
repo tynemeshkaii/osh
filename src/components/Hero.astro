@@ -1,14 +1,28 @@
 ---
 import { content, HERO_VARIANTS, finalList } from '@/content/schema';
+import { asset } from '@/lib/assets';
 
 const { hero } = content;
 const trust = finalList(hero.trustStrip);
+const poster = asset(hero.media.poster);
+const video = asset(hero.media.video);
 ---
 
 <section data-hero class="relative flex min-h-[100svh] max-h-[812px] flex-col overflow-hidden text-white">
-  <!-- Video placeholder. Real <video> with poster arrives in stage 3. -->
-  <!-- The section itself is the fixed box (100svh, ≤812px); the video will use object-fit: cover. -->
-  <div class="media-placeholder absolute inset-0 h-full w-full" aria-hidden="true"></div>
+  <!-- The section is the fixed box (100svh, ≤812px); the video covers it.
+       Poster paints first (LCP), video takes over once it can autoplay.
+       Draft asset: source clip as-is, not yet cut/compressed to the 1.5 MB budget. -->
+  <video
+    class="absolute inset-0 h-full w-full object-cover"
+    src={video}
+    poster={poster}
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    aria-label={hero.media.alt}
+  ></video>
   <div class="absolute inset-0 bg-overlay" aria-hidden="true"></div>
 
   <div class="relative mx-auto flex w-full max-w-[640px] flex-1 flex-col justify-end px-4 pb-8 pt-12 md:pb-12">

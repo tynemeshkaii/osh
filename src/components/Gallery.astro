@@ -1,23 +1,25 @@
 ---
 import Section from '@/components/Section.astro';
 import { content } from '@/content/schema';
+import { asset } from '@/lib/assets';
 
 const { gallery } = content;
 ---
 
 <Section id="gallery" heading={gallery.heading} sub={gallery.sub}>
   <ul class="grid grid-cols-2 gap-3">
-    {gallery.captions.map((caption, i) => (
-      <li class:list={[(i === 0 || i === 3) && 'col-span-2']}>
+    {gallery.items.map((item) => (
+      <li class:list={[item.aspect !== '1 / 1' && 'col-span-2']}>
         <figure>
-          <!-- Image placeholder; real webp/avif with lazy loading in stage 4. -->
-          <div
-            class="media-placeholder w-full overflow-hidden rounded-card"
-            style={`aspect-ratio: ${i === 0 || i === 3 ? '16 / 10' : '1 / 1'};`}
-            role="img"
-            aria-label={caption}
+          <img
+            src={asset(item.src)}
+            alt={item.alt}
+            loading="lazy"
+            decoding="async"
+            class="w-full rounded-card object-cover"
+            style={`aspect-ratio: ${item.aspect};`}
           />
-          <figcaption class="mt-2 text-small text-muted">{caption}</figcaption>
+          <figcaption class="mt-2 text-small text-muted">{item.caption}</figcaption>
         </figure>
       </li>
     ))}

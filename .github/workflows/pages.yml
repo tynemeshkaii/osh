@@ -21,6 +21,7 @@ jobs:
       ASTRO_TELEMETRY_DISABLED: 1
       SITE_URL: https://tynemeshkaii.github.io
       BASE_PATH: /osh
+      DRAFT: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

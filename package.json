@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
+    "dev": "DRAFT=true astro dev",
+    "build:draft": "DRAFT=true astro check && DRAFT=true astro build",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"

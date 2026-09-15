@@ -16,8 +16,15 @@ export interface HeroVariant {
   sub: string;
 }
 
+export interface HeroMedia {
+  video: string;
+  poster: string;
+  alt: string;
+}
+
 export interface Hero {
   eyebrow: string;
+  media: HeroMedia;
   variants: Record<HeroVariantId, HeroVariant>;
   defaultVariant: HeroVariantId;
   cta: string;
@@ -58,10 +65,18 @@ export interface SocialProof {
   pressCaption: string;
 }
 
+export interface GalleryItem {
+  src: string;
+  alt: string;
+  caption: string;
+  /** CSS aspect-ratio value, e.g. "3 / 2". Fixed per slot against CLS. */
+  aspect: string;
+}
+
 export interface Gallery {
   heading: string;
   sub: string;
-  captions: string[];
+  items: GalleryItem[];
 }
 
 export interface MenuCourse {
@@ -205,9 +220,15 @@ export interface Seo {
   ogImageAlt: string;
 }
 
+export interface Draft {
+  banner: string;
+  placeholderPrefix: string;
+}
+
 export interface Content {
   _meta: { locale: string; version: string; note: string };
   _placeholders: Record<string, string>;
+  draft: Draft;
   seo: Seo;
   hero: Hero;
   offer: Offer;
@@ -272,26 +293,52 @@ export function loadContent(): Content {
 // Placeholder helpers
 // ---------------------------------------------------------------------------
 
-const PLACEHOLDER_RE = /\{\{\s*[A-Z0-9_]+\s*\}\}/;
+const PLACEHOLDER_RE = /\{\{\s*([A-Z0-9_]+)\s*\}\}/g;
+
+/**
+ * Draft mode (DRAFT=true at build time) renders unreplaced placeholders as
+ * visible "TBD: …" markers so a reviewer sees where data will go. In normal
+ * builds the helpers below hide such content instead, so raw {{X}} never
+ * reaches a real visitor.
+ */
+export const DRAFT = import.meta.env.DRAFT === 'true';
 
 /** True when the string still contains an unreplaced {{PLACEHOLDER}}. */
 export function hasPlaceholder(value: string | null | undefined): boolean {
-  return typeof value === 'string' && PLACEHOLDER_RE.test(value);
+  return typeof value === 'string' && new RegExp(PLACEHOLDER_RE.source).test(value);
 }
 
-/** Returns the string if it is final copy, otherwise null (caller hides the element). */
+/** "{{LAST_SEATING}}" → "TBD: last seating". Draft mode only. */
+function draftify(value: string): string {
+  return value.replace(PLACEHOLDER_RE, (_, key: string) =>
+    `${content.draft.placeholderPrefix} ${key.toLowerCase().replace(/_/g, ' ')}`,
+  );
+}
+
+/** Final copy as-is; placeholders become TBD markers in draft, null otherwise (caller hides). */
 export function finalText(value: string | null | undefined): string | null {
   if (value == null) return null;
-  return hasPlaceholder(value) ? null : value;
+  if (!hasPlaceholder(value)) return value;
+  return DRAFT ? draftify(value) : null;
 }
 
-/** Drops list entries that still contain placeholders. */
+/** Draft: placeholders marked. Otherwise entries with placeholders are dropped. */
 export function finalList(values: readonly string[]): string[] {
-  return values.filter((v) => !hasPlaceholder(v));
+  return DRAFT ? values.map(draftify) : values.filter((v) => !hasPlaceholder(v));
 }
 
-/** Drops objects whose given fields still contain placeholders. */
+/** Draft: placeholders in the given fields marked. Otherwise such objects are dropped. */
 export function finalItems<T extends object>(items: readonly T[], keys: readonly (keyof T)[]): T[] {
+  if (DRAFT) {
+    return items.map((item) => {
+      const copy = { ...item };
+      for (const k of keys) {
+        const v = copy[k];
+        if (typeof v === 'string') copy[k] = draftify(v) as T[typeof k];
+      }
+      return copy;
+    });
+  }
   return items.filter((item) =>
     keys.every((k) => {
       const v = item[k];

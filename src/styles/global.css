@@ -66,10 +66,4 @@
   html[data-variant='business'] [data-hero-variant='business'],
   html[data-variant='price'] [data-hero-variant='price'] { display: block; }
   html:not([data-variant]) [data-hero-variant='view'] { display: block; }
-
-  /* Media placeholder until real assets land. Aspect-ratio is set inline per slot. */
-  .media-placeholder {
-    background:
-      linear-gradient(135deg, #d8d2c8 0%, #b9b1a5 50%, #8f877b 100%);
-  }
 }

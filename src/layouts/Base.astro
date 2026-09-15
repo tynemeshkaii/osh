@@ -1,9 +1,9 @@
 ---
 import '@/styles/global.css';
-import { content, HERO_VARIANTS } from '@/content/schema';
+import { content, HERO_VARIANTS, DRAFT } from '@/content/schema';
 import { asset } from '@/lib/assets';
 
-const { seo, hero, _meta } = content;
+const { seo, hero, draft, _meta } = content;
 const variants = HERO_VARIANTS;
 const defaultVariant = hero.defaultVariant;
 const fonts = {
@@ -75,6 +75,9 @@ const fonts = {
     <slot name="head" />
   </head>
   <body class="bg-bg text-ink font-sans antialiased">
+    {DRAFT && (
+      <p class="bg-ink px-4 py-2 text-center text-small text-white/90" role="note">{draft.banner}</p>
+    )}
     <slot />
   </body>
 </html>

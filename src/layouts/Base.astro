@@ -1,10 +1,16 @@
 ---
 import '@/styles/global.css';
 import { content, HERO_VARIANTS } from '@/content/schema';
+import { asset } from '@/lib/assets';
 
 const { seo, hero, _meta } = content;
 const variants = HERO_VARIANTS;
 const defaultVariant = hero.defaultVariant;
+const fonts = {
+  display: asset('/fonts/display-regular.woff2'),
+  sans: asset('/fonts/sans-regular.woff2'),
+  sansMedium: asset('/fonts/sans-medium.woff2'),
+};
 ---
 
 <!doctype html>
@@ -20,38 +26,38 @@ const defaultVariant = hero.defaultVariant;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={seo.title} />
     <meta property="og:description" content={seo.description} />
-    <meta property="og:image" content="/img/og.jpg" />
+    <meta property="og:image" content={asset('/img/og.jpg')} />
     <meta property="og:image:alt" content={seo.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
     <!-- Only the display face takes part in LCP (H1). Other faces load on demand. -->
-    <link rel="preload" href="/fonts/display-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fonts.display} as="font" type="font/woff2" crossorigin />
     <!-- @font-face is inlined (not bundled) so Vite does not try to resolve
          font files at build time; they are served straight from /public/fonts. -->
-    <style is:inline>
+    <style is:inline set:html={`
       @font-face {
         font-family: 'OSH Display';
-        src: url('/fonts/display-regular.woff2') format('woff2');
+        src: url('${fonts.display}') format('woff2');
         font-weight: 400;
         font-style: normal;
         font-display: swap;
       }
       @font-face {
         font-family: 'OSH Sans';
-        src: url('/fonts/sans-regular.woff2') format('woff2');
+        src: url('${fonts.sans}') format('woff2');
         font-weight: 400;
         font-style: normal;
         font-display: swap;
       }
       @font-face {
         font-family: 'OSH Sans';
-        src: url('/fonts/sans-medium.woff2') format('woff2');
+        src: url('${fonts.sansMedium}') format('woff2');
         font-weight: 500;
         font-style: normal;
         font-display: swap;
       }
-    </style>
+    `} />
 
     <!-- Hero variant from ?v=view|business|price. Runs before first paint so
          there is no flash of the wrong headline. Only the hero copy changes. -->

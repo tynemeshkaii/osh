@@ -2,8 +2,15 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+// GitHub Pages serves the draft under /osh; Cloudflare Pages will serve from /.
+// Both come from env so the same code builds for either target.
+const site = process.env.SITE_URL;
+const base = process.env.BASE_PATH ?? '/';
+
 export default defineConfig({
   output: 'static',
+  site,
+  base,
   vite: {
     plugins: [tailwindcss()],
   },

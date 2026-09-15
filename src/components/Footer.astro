@@ -2,15 +2,22 @@
 import { content } from '@/content/schema';
 import { telHref } from '@/lib/links';
 
-const { footer } = content;
+const { footer, links } = content;
+const ext = 'inline-flex min-h-[44px] items-center text-ink underline underline-offset-4';
 ---
 
 <footer class="border-t border-line py-8 pb-[calc(32px+72px)] text-small text-muted">
   <div class="mx-auto w-full max-w-[640px] px-4">
-    <p>{footer.address}</p>
+    <p>
+      <a href={links.maps.url} target="_blank" rel="noopener" class="text-ink" data-cta="maps">{footer.address}</a>
+    </p>
     <p class="mt-2">
       <a href={telHref(footer.phone)} class="inline-flex min-h-[44px] items-center text-ink" data-cta="phone">{footer.phone}</a>
     </p>
-    <p class="mt-2">{footer.copyright}</p>
+    <ul class="mt-2 flex flex-wrap gap-x-6">
+      <li><a href={links.instagram.url} target="_blank" rel="noopener" class={ext} data-cta="instagram">{links.instagram.label}</a></li>
+      <li><a href={links.googleProfile.url} target="_blank" rel="noopener" class={ext} data-cta="google">{links.googleProfile.label}</a></li>
+    </ul>
+    <p class="mt-4">{footer.copyright}</p>
   </div>
 </footer>

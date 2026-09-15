@@ -2,21 +2,31 @@
 import Section from '@/components/Section.astro';
 import { content, finalItems, finalText } from '@/content/schema';
 
-const { socialProof } = content;
+const { socialProof, links } = content;
+const GOOGLE = 'Google';
 const ratingLine = finalText(socialProof.ratingLine);
 const quotes = finalItems(socialProof.quotes, ['text', 'author']);
 const press = socialProof.pressCaption.split(' · ');
 ---
 
 <Section id="proof" heading={socialProof.heading} surface>
-  {ratingLine && <p class="text-body font-medium">{ratingLine}</p>}
+  {ratingLine && (
+    <p class="text-body font-medium">
+      <a href={links.googleProfile.url} target="_blank" rel="noopener" class="underline underline-offset-4" data-cta="google">{ratingLine}</a>
+    </p>
+  )}
 
   {quotes.length > 0 && (
     <ul class="mt-6 space-y-4">
       {quotes.map((q) => (
         <li class="rounded-card border border-line p-5">
           <blockquote class="text-body">“{q.text}”</blockquote>
-          <p class="mt-3 text-small text-muted">{q.author} · {q.source}</p>
+          <p class="mt-3 text-small text-muted">
+            {q.author} ·{' '}
+            {q.source === GOOGLE
+              ? <a href={links.googleProfile.url} target="_blank" rel="noopener" class="underline underline-offset-4" data-cta="google">{q.source}</a>
+              : q.source}
+          </p>
         </li>
       ))}
     </ul>

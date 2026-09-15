@@ -182,6 +182,17 @@ export interface StickyCta {
   note: string;
 }
 
+export interface ExternalLink {
+  url: string;
+  label: string;
+}
+
+export interface Links {
+  instagram: ExternalLink;
+  googleProfile: ExternalLink;
+  maps: ExternalLink;
+}
+
 export interface Footer {
   address: string;
   phone: string;
@@ -208,6 +219,7 @@ export interface Content {
   form: Form;
   thanks: Thanks;
   stickyCta: StickyCta;
+  links: Links;
   footer: Footer;
 }
 

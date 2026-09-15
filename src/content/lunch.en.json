@@ -227,6 +227,12 @@
 
   "stickyCta": { "label": "Request your table", "note": "Daily 2–6 PM" },
 
+  "links": {
+    "instagram": { "url": "https://www.instagram.com/oshdubai/", "label": "@oshdubai" },
+    "googleProfile": { "url": "https://share.google/vQzGHRZSswB4UH5q3", "label": "Reviews on Google" },
+    "maps": { "url": "https://maps.app.goo.gl/vowqbQTHdyoLNsD28", "label": "Open in Google Maps" }
+  },
+
   "footer": {
     "address": "OSH Del Mar · Address Beach Resort, The Walk, JBR, Dubai · M Floor",
     "phone": "+971 50 914 4215",

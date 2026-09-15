@@ -35,23 +35,6 @@ export interface Hero {
 
 export type OfferId = 'set' | 'alacarte';
 
-export interface OfferCard {
-  id: OfferId;
-  badge: string | null;
-  title: string;
-  price: string;
-  items: string[];
-  footnote: string | null;
-  cta: string;
-}
-
-export interface Offer {
-  heading: string;
-  sub: string;
-  cards: OfferCard[];
-  closing: string;
-}
-
 export interface Quote {
   text: string;
   author: string;
@@ -77,38 +60,6 @@ export interface Gallery {
   heading: string;
   sub: string;
   items: GalleryItem[];
-}
-
-export interface MenuCourse {
-  label: string;
-  body: string;
-}
-
-export interface Menu {
-  heading: string;
-  sub: string;
-  courses: MenuCourse[];
-  closing: string;
-}
-
-export interface LabeledItem {
-  label: string;
-  body: string;
-}
-
-export interface Practical {
-  heading: string;
-  items: LabeledItem[];
-}
-
-export interface FaqItem {
-  q: string;
-  a: string;
-}
-
-export interface Faq {
-  heading: string;
-  items: FaqItem[];
 }
 
 export interface FieldBase {
@@ -235,12 +186,8 @@ export interface Content {
   draft: Draft;
   seo: Seo;
   hero: Hero;
-  offer: Offer;
   socialProof: SocialProof;
   gallery: Gallery;
-  menu: Menu;
-  practical: Practical;
-  faq: Faq;
   form: Form;
   thanks: Thanks;
   stickyCta: StickyCta;
@@ -268,15 +215,12 @@ function isOneOf<T extends string>(list: readonly T[], value: string): value is 
 }
 
 function parseContent(shape: Loose<Content>): Content {
-  const { hero, offer, form } = shape;
+  const { hero, form } = shape;
   if (!isOneOf(HERO_VARIANTS, hero.defaultVariant)) {
     throw new Error(`content.hero.defaultVariant: unknown variant "${hero.defaultVariant}"`);
   }
   for (const id of HERO_VARIANTS) {
     if (!(id in hero.variants)) throw new Error(`content.hero.variants: missing "${id}"`);
-  }
-  for (const card of offer.cards) {
-    if (!isOneOf(OFFER_IDS, card.id)) throw new Error(`content.offer.cards: unknown id "${card.id}"`);
   }
   for (const opt of form.step1.fields.offer.options) {
     if (!isOneOf(OFFER_IDS, opt.value)) {

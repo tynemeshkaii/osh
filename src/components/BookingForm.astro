@@ -266,14 +266,6 @@ const primaryBtn =
 
     form.querySelector('[data-step-back]')?.addEventListener('click', () => showStep(1));
 
-    // Offer card CTAs preselect the matching radio on the way to the form.
-    document.querySelectorAll<HTMLElement>('[data-select-offer]').forEach((el) => {
-      el.addEventListener('click', () => {
-        const radio = form.querySelector<HTMLInputElement>(`[name="offer"][value="${el.dataset.selectOffer}"]`);
-        if (radio) radio.checked = true;
-      });
-    });
-
     // --- Submit ---
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

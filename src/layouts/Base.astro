@@ -7,7 +7,7 @@ const { seo, hero, draft, _meta } = content;
 const variants = HERO_VARIANTS;
 const defaultVariant = hero.defaultVariant;
 const fonts = {
-  display: asset('/fonts/display-regular.woff2'),
+  display: asset('/fonts/display-medium.woff2'),
   sans: asset('/fonts/sans-regular.woff2'),
   sansMedium: asset('/fonts/sans-medium.woff2'),
 };
@@ -31,7 +31,8 @@ const fonts = {
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
-    <!-- Only the display face takes part in LCP (H1). Other faces load on demand. -->
+    <!-- Cormorant Garamond 500 (display) + Google Sans 400/500 (UI), subset to latin/latin-ext, ~20 KB each.
+         Only the display face takes part in LCP (H1). Other faces load on demand. -->
     <link rel="preload" href={fonts.display} as="font" type="font/woff2" crossorigin />
     <!-- @font-face is inlined (not bundled) so Vite does not try to resolve
          font files at build time; they are served straight from /public/fonts. -->
@@ -39,7 +40,7 @@ const fonts = {
       @font-face {
         font-family: 'OSH Display';
         src: url('${fonts.display}') format('woff2');
-        font-weight: 400;
+        font-weight: 500;
         font-style: normal;
         font-display: swap;
       }

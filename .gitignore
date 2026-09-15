@@ -10,3 +10,6 @@ dist/
 # исходники ассетов (оригиналы фото/видео), в сборку не попадают
 assets-src/
 .tmp_th/
+
+# исходные TTF Google Sans (в сборку идут только subset-woff2 из public/fonts)
+Google_Sans/

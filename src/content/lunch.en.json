@@ -20,16 +20,16 @@
     "eyebrow": "OSH DEL MAR · ADDRESS BEACH RESORT, M FLOOR",
     "variants": {
       "view": {
-        "h1": "The lunch that ends with sunset over the sea",
-        "sub": "Four courses for 150 AED, or 20% off the à la carte menu. Daily, 2 to 6 PM, on the terrace above Dubai Marina."
+        "h1": "The lunch that runs into golden hour",
+        "sub": "Four courses from the charcoal grill and fish bar, 150 AED. Daily 2 to 6 PM on the terrace above Dubai Marina — the last seating catches the light."
       },
       "business": {
         "h1": "Some deals close better with a sea view",
-        "sub": "A four-course business lunch, 150 AED, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk."
+        "sub": "A four-course grill and seafood lunch, 150 AED, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk."
       },
       "price": {
         "h1": "An Address Beach Resort dinner, at lunch prices",
-        "sub": "Same kitchen, same terrace, same view — just before 6 PM. Four courses for 150 AED, or 20% off everything à la carte."
+        "sub": "Same grill, same fish bar, same terrace, same view — just before 6 PM. 20% off everything à la carte, daily 2 to 6 PM."
       }
     },
     "defaultVariant": "view",
@@ -38,10 +38,10 @@
       "Check my table",
       "Reserve my table"
     ],
-    "ctaMicrocopy": "30 seconds. No prepayment. Free cancellation.",
+    "ctaMicrocopy": "30 seconds. No prepayment.",
     "trustStrip": [
       "★ 4.7 on Google · 3,720 reviews",
-      "Address Beach Resort, M Floor",
+      "Terrace or indoor — your call",
       "Free valet parking"
     ],
     "media": {
@@ -54,15 +54,15 @@
   },
   "socialProof": {
     "heading": "People come back for the terrace",
-    "ratingLine": "★ 4.7 on Google · 3,720 reviews · 4.6 on TripAdvisor",
+    "ratingLine": "4.6 on TripAdvisor · read the 3,720 Google reviews →",
     "quotes": [
       {
-        "text": "We had an amazing dinner on the terrace with a terrific service of Norman!! Great view and delicious food.",
+        "text": "The chef here has done an excellent job with the food and the open kitchen, nice open terrace and great interiors just complete the experience.",
         "author": "Guest review",
         "source": "TripAdvisor"
       },
       {
-        "text": "The chef here has done an excellent job with the food and the open kitchen, nice open terrace and great interiors just complete the experience.",
+        "text": "We had an amazing dinner on the terrace with a terrific service of Norman!! Great view and delicious food.",
         "author": "Guest review",
         "source": "TripAdvisor"
       },
@@ -72,7 +72,7 @@
         "source": "TripAdvisor"
       }
     ],
-    "pressCaption": "Address Hotels · TimeOut Dubai · VisitDubai"
+    "pressCaption": "TimeOut Dubai · VisitDubai"
   },
   "gallery": {
     "heading": "The M floor, from 2 PM to sunset",
@@ -118,7 +118,7 @@
   },
   "form": {
     "heading": "Request your table",
-    "sub": "Two steps, about thirty seconds. We confirm on WhatsApp.",
+    "sub": "Two steps, 30 seconds. We confirm on WhatsApp.",
     "progress": {
       "step1": "Step 1 of 2",
       "step2": "Step 2 of 2",

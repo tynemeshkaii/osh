@@ -4,6 +4,11 @@ import { content, DRAFT } from '@/content/schema';
 import { whatsappHref } from '@/lib/links';
 import { GUESTS_MIN, GUESTS_MAX, TIME_SLOTS } from '@/lib/validation';
 
+/** Guest counts offered as pills; anything above opens the number input. */
+const GUEST_PILLS = [1, 2, 3, 4, 5, 6] as const;
+const GUESTS_DEFAULT = 2;
+const GUESTS_MORE_FROM = Math.max(...GUEST_PILLS) + 1;
+
 const { form, thanks, footer, links } = content;
 const { step1, step2, progress, whatsappBlock } = form;
 const waHref = whatsappHref(footer.phone, whatsappBlock.prefilledMessage);
@@ -21,6 +26,7 @@ const slots = TIME_SLOTS.map((value) => ({ value, label: slotLabel(value) }));
 const clientConfig = JSON.stringify({
   errors: form.errors,
   offerLabels: Object.fromEntries(step2.fields.offer.options.map((o) => [o.value, o.label])),
+  seatingLabels: Object.fromEntries(step1.fields.seating.options.map((o) => [o.value, o.label])),
   summaryTemplate: thanks.summaryTemplate,
   ctaLoading: step2.ctaLoading,
   cta: step2.cta,
@@ -79,11 +85,33 @@ const pillClass =
         <p class={errorClass} data-error-for="time" hidden></p>
       </fieldset>
 
-      <div class="mt-5">
-        <label for="f-guests" class={labelClass}>{step1.fields.guests.label}</label>
-        <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value="2" inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" />
+      <!-- Guests: one tap for 1–6; "7+" reveals the number input. The native
+           input is the single source of the value, same pattern as the date. -->
+      <fieldset class="mt-5 border-0 p-0" data-guests-group>
+        <legend class={labelClass}>{step1.fields.guests.label}</legend>
+        <div class="mt-2 flex flex-wrap gap-2" role="group">
+          {GUEST_PILLS.map((n) => (
+            <button type="button" class:list={[pillClass, 'min-w-[44px]']} data-guests-quick={n} aria-pressed={n === GUESTS_DEFAULT}>{n}</button>
+          ))}
+          <button type="button" class:list={[pillClass, 'min-w-[44px]']} data-guests-quick="more" aria-pressed="false">{step1.fields.guests.more}</button>
+        </div>
+        <label for="f-guests" class:list={['mt-3', labelClass]} data-guests-more-label hidden>{step1.fields.guests.moreLabel}</label>
+        <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value={GUESTS_DEFAULT} data-more-from={GUESTS_MORE_FROM} inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" hidden />
         <p id="e-guests" class={errorClass} data-error-for="guests" hidden></p>
-      </div>
+      </fieldset>
+
+      <!-- Seating: the ad sold the terrace, so we ask. Preselected "no preference" keeps it one optional tap. -->
+      <fieldset class="mt-5 border-0 p-0">
+        <legend class={labelClass}>{step1.fields.seating.label}</legend>
+        <div class="mt-2 flex flex-wrap gap-2">
+          {step1.fields.seating.options.map((opt) => (
+            <label class={pillClass}>
+              <input type="radio" name="seating" value={opt.value} checked={opt.default} class="sr-only" />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <button type="button" class:list={['mt-6', primaryBtn]} data-step-next>
         {step1.cta}
@@ -189,6 +217,7 @@ const pillClass =
   interface Config {
     errors: Record<ErrorKey, string>;
     offerLabels: Record<string, string>;
+    seatingLabels: Record<string, string>;
     summaryTemplate: string;
     ctaLoading: string;
     cta: string;
@@ -270,6 +299,48 @@ const pillClass =
     refreshToday();
     refreshSlots();
 
+    // --- Guests: pills fill the native input; "7+" reveals it. ---
+    const guestsInput = form.querySelector<HTMLInputElement>('[name="guests"]')!;
+    const guestsBtns = Array.from(form.querySelectorAll<HTMLButtonElement>('[data-guests-quick]'));
+    const guestsMoreLabel = form.querySelector<HTMLElement>('[data-guests-more-label]');
+    const moreFrom = Number(guestsInput.dataset.moreFrom);
+
+    const setGuestsPill = (which: string | null) => {
+      guestsBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.guestsQuick === which)));
+    };
+    const showGuestsInput = (show: boolean) => {
+      guestsInput.hidden = !show;
+      if (guestsMoreLabel) guestsMoreLabel.hidden = !show;
+    };
+
+    guestsBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const which = btn.dataset.guestsQuick!;
+        if (which === 'more') {
+          showGuestsInput(true);
+          if (Number(guestsInput.value) < moreFrom) guestsInput.value = String(moreFrom);
+          guestsInput.focus();
+          guestsInput.select();
+        } else {
+          showGuestsInput(false);
+          guestsInput.value = which;
+        }
+        guestsInput.dispatchEvent(new Event('input', { bubbles: true }));
+        setGuestsPill(which);
+      }),
+    );
+
+    // Typing in the number input keeps "7+" pressed, whatever the number.
+    guestsInput.addEventListener('input', () => {
+      if (!guestsInput.hidden) setGuestsPill('more');
+    });
+
+    // If the value arrives pre-filled (back/forward cache) above the pill range, show the input.
+    if (Number(guestsInput.value) >= moreFrom) {
+      showGuestsInput(true);
+      setGuestsPill('more');
+    }
+
     // --- Notes: open the disclosure if it already holds text. ---
     const notes = form.querySelector<HTMLDetailsElement>('[data-notes]');
     const notesField = form.querySelector<HTMLTextAreaElement>('[name="notes"]');
@@ -281,6 +352,7 @@ const pillClass =
         date: String(fd.get('date') ?? ''),
         time: String(fd.get('time') ?? ''),
         guests: String(fd.get('guests') ?? ''),
+        seating: String(fd.get('seating') ?? ''),
         offer: String(fd.get('offer') ?? ''),
         name: String(fd.get('name') ?? ''),
         phone: String(fd.get('phone') ?? ''),
@@ -320,6 +392,11 @@ const pillClass =
       });
       scope.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
     };
+
+    // First touch of any field: tell the page (sticky bar, later analytics `form_start`).
+    form.addEventListener('input', () => {
+      document.dispatchEvent(new CustomEvent('booking:start'));
+    }, { once: true });
 
     // Clear a field's error as soon as the visitor edits it.
     form.addEventListener('input', (e) => {
@@ -374,12 +451,17 @@ const pillClass =
       }
     });
 
-    const showThanks = (v: { guests: number; date: string; time: string; offer: string }) => {
+    const showThanks = (v: { guests: number; date: string; time: string; seating: string; offer: string }) => {
       const date = new Date(`${v.date}T${v.time}:00`);
-      const summary = cfg.summaryTemplate
+      // "No preference" is not worth a segment: drop {{SEATING}} and its separator.
+      const template = v.seating === 'any'
+        ? cfg.summaryTemplate.replace(/\s*·\s*\{\{SEATING\}\}/, '')
+        : cfg.summaryTemplate;
+      const summary = template
         .replace('{{GUESTS}}', String(v.guests))
         .replace('{{DATE}}', date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }))
         .replace('{{TIME}}', date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }))
+        .replace('{{SEATING}}', cfg.seatingLabels[v.seating] ?? v.seating)
         .replace('{{OFFER}}', cfg.offerLabels[v.offer] ?? v.offer);
       const summaryEl = thanksPanel.querySelector<HTMLElement>('[data-thanks-summary]');
       if (summaryEl) summaryEl.textContent = summary;

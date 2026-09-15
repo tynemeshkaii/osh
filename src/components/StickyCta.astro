@@ -10,7 +10,7 @@ const { stickyCta } = content;
   aria-hidden="true"
 >
   <div class="mx-auto flex max-w-[640px] items-center justify-between gap-4">
-    <span class="truncate text-small text-muted">{stickyCta.note}</span>
+    <span class="truncate text-small text-muted" data-sticky-note data-note-resume={stickyCta.noteResume}>{stickyCta.note}</span>
     <a href="#booking" class="inline-flex min-h-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-pill bg-accent px-5 text-body font-medium text-accent-ink" data-cta="sticky">
       {stickyCta.label}
     </a>
@@ -35,5 +35,12 @@ const { stickyCta } = content;
 
     new IntersectionObserver(([e]) => { heroVisible = !!e?.isIntersecting; apply(); }, { threshold: 0.1 }).observe(hero);
     new IntersectionObserver(([e]) => { formVisible = !!e?.isIntersecting; apply(); }, { threshold: 0 }).observe(form);
+  }
+
+  // Once the visitor has touched the form, the bar nudges them back to it.
+  // `booking:start` is dispatched by BookingForm on the first input.
+  const note = bar?.querySelector<HTMLElement>('[data-sticky-note]');
+  if (note?.dataset.noteResume) {
+    document.addEventListener('booking:start', () => { note.textContent = note.dataset.noteResume!; }, { once: true });
   }
 </script>

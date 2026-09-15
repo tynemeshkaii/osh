@@ -12,6 +12,10 @@ export const OFFER_IDS: readonly OfferId[] = ['set', 'alacarte'] as const;
 
 export type HeroVariantId = 'view' | 'business' | 'price';
 
+/** Where the guest would like to sit. Optional: anything unknown becomes 'any'. */
+export type SeatingId = 'terrace' | 'indoor' | 'any';
+export const SEATING_IDS: readonly SeatingId[] = ['terrace', 'indoor', 'any'] as const;
+
 /** The restaurant's zone. "Today" and "has this slot passed" are decided here, not in the visitor's zone. */
 export const RESTAURANT_TZ = 'Asia/Dubai';
 
@@ -20,14 +24,15 @@ export const RESTAURANT_TZ = 'Asia/Dubai';
  * seating — the form offers exactly these, nothing else is accepted.
  */
 export const TIME_SLOTS: readonly string[] = [
-  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00',
 ] as const;
 
-/** Step 1 fields: when. */
+/** Step 1 fields: when, how many, where. */
 export interface Step1Input {
   date: string; // YYYY-MM-DD
   time: string; // HH:MM, one of TIME_SLOTS
   guests: string | number;
+  seating?: string; // one of SEATING_IDS; missing → 'any'
 }
 
 /** Step 2 fields: who, which lunch, where to confirm. */
@@ -59,6 +64,7 @@ export interface Validated {
   date: string;
   time: string;
   guests: number;
+  seating: SeatingId;
   offer: OfferId;
   name: string;
   phone: string; // E.164, e.g. +971509144215
@@ -120,6 +126,12 @@ export function addDaysIso(date: string, days: number): string {
   return t.toISOString().slice(0, 10);
 }
 
+/** Seating preference is never an error: unknown or missing means no preference. */
+export function normalizeSeating(raw: string | undefined): SeatingId {
+  const s = String(raw ?? '').trim();
+  return (SEATING_IDS as readonly string[]).includes(s) ? (s as SeatingId) : 'any';
+}
+
 /** True when `slot` is still requestable on `date` at the given restaurant wall clock. */
 export function isSlotOpen(date: string, slot: string, now = nowInRestaurantZone()): boolean {
   if (date > now.date) return true;
@@ -174,6 +186,7 @@ export function validateBooking(input: BookingInput, now = nowInRestaurantZone()
       date: input.date.trim(),
       time: input.time.trim(),
       guests: Number(input.guests),
+      seating: normalizeSeating(input.seating),
       offer: input.offer as OfferId,
       name: input.name.trim(),
       phone: normalizePhone(input.phone)!,

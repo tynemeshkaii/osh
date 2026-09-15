@@ -14,6 +14,8 @@ export const HERO_VARIANTS: readonly HeroVariantId[] = ['view', 'business', 'pri
 export interface HeroVariant {
   h1: string;
   sub: string;
+  /** Trust line under the CTA. Per variant: a business guest wants different proof than a view guest. */
+  trustStrip: string[];
 }
 
 export interface HeroMedia {
@@ -33,10 +35,10 @@ export interface Hero {
   /** Secondary hero CTA: opens WhatsApp with `whatsappMessage` prefilled. */
   ctaSecondary: string;
   whatsappMessage: string;
-  trustStrip: string[];
 }
 
 export type OfferId = 'set' | 'alacarte';
+export type SeatingId = 'terrace' | 'indoor' | 'any';
 
 export interface Quote {
   text: string;
@@ -83,6 +85,23 @@ export interface OfferField extends FieldBase {
   options: OfferOption[];
 }
 
+export interface SeatingOption {
+  value: SeatingId;
+  label: string;
+  default: boolean;
+}
+
+export interface SeatingField extends FieldBase {
+  options: SeatingOption[];
+}
+
+export interface GuestsField extends FieldBase {
+  /** The last pill: opens the number input for larger parties. */
+  more: string;
+  /** Label of that number input. */
+  moreLabel: string;
+}
+
 export interface DateField extends FieldBase {
   /** Quick picks shown before the native date input. */
   quick: { today: string; tomorrow: string; pick: string };
@@ -100,7 +119,8 @@ export interface FormStep1 {
   fields: {
     date: DateField;
     time: FieldBase;
-    guests: FieldBase;
+    guests: GuestsField;
+    seating: SeatingField;
   };
   cta: string;
 }
@@ -167,6 +187,8 @@ export interface Thanks {
 export interface StickyCta {
   label: string;
   note: string;
+  /** Replaces `note` once the visitor has started the form. */
+  noteResume: string;
 }
 
 export interface ExternalLink {
@@ -226,6 +248,7 @@ type Loose<T> = T extends string
       : T;
 
 const OFFER_IDS: readonly OfferId[] = ['set', 'alacarte'] as const;
+const SEATING_IDS: readonly SeatingId[] = ['terrace', 'indoor', 'any'] as const;
 
 function isOneOf<T extends string>(list: readonly T[], value: string): value is T {
   return (list as readonly string[]).includes(value);
@@ -242,6 +265,11 @@ function parseContent(shape: Loose<Content>): Content {
   for (const opt of form.step2.fields.offer.options) {
     if (!isOneOf(OFFER_IDS, opt.value)) {
       throw new Error(`content.form.step2.fields.offer.options: unknown value "${opt.value}"`);
+    }
+  }
+  for (const opt of form.step1.fields.seating.options) {
+    if (!isOneOf(SEATING_IDS, opt.value)) {
+      throw new Error(`content.form.step1.fields.seating.options: unknown value "${opt.value}"`);
     }
   }
   return shape as Content;

@@ -4,7 +4,8 @@ import { asset } from '@/lib/assets';
 import { whatsappHref } from '@/lib/links';
 
 const { hero, footer } = content;
-const trust = finalList(hero.trustStrip);
+// One trust strip per variant; placeholders (e.g. {{BUSINESS_FACT}}) drop out of non-draft builds.
+const trust = Object.fromEntries(HERO_VARIANTS.map((id) => [id, finalList(hero.variants[id].trustStrip)]));
 const waHref = whatsappHref(footer.phone, hero.whatsappMessage);
 const poster = asset(hero.media.poster);
 const video = asset(hero.media.video);
@@ -57,10 +58,12 @@ const video = asset(hero.media.video);
       {hero.ctaSecondary}
     </a>
 
-    {trust.length > 0 && (
-      <ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/25 pt-4 text-small opacity-90">
-        {trust.map((line) => <li>{line}</li>)}
-      </ul>
-    )}
+    {HERO_VARIANTS.map((id) => trust[id]!.length > 0 && (
+      <div data-hero-variant={id}>
+        <ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/25 pt-4 text-small opacity-90">
+          {trust[id]!.map((line) => <li>{line}</li>)}
+        </ul>
+      </div>
+    ))}
   </div>
 </section>

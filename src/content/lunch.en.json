@@ -5,7 +5,8 @@
     "note": "All landing-page copy lives here. Never hardcode strings in components. Values wrapped in {{ }} are placeholders that MUST be replaced with real data before launch — see _placeholders."
   },
   "_placeholders": {
-    "ALT_TIME": "Filled at runtime by the availability response"
+    "ALT_TIME": "Filled at runtime by the availability response",
+    "BUSINESS_FACT": "One client-confirmed fact for the business angle: Wi-Fi, 60-minute service, company invoice. Hidden until replaced."
   },
   "draft": {
     "banner": "Draft · structure, copy and flow for review. Fonts, photos and final design are not in scope yet.",
@@ -21,15 +22,31 @@
     "variants": {
       "view": {
         "h1": "The lunch that runs into golden hour",
-        "sub": "Four courses from the charcoal grill and fish bar, 150 AED. Daily 2 to 6 PM on the terrace above Dubai Marina — the last seating catches the light."
+        "sub": "Four courses from the charcoal grill and fish bar, 150 AED. Daily 2 to 6 PM on the terrace above Dubai Marina — the last seating catches the light.",
+        "trustStrip": [
+          "★ 4.7 on Google · 3,720 reviews",
+          "Terrace or indoor — your call",
+          "Free valet parking"
+        ]
       },
       "business": {
         "h1": "Some deals close better with a sea view",
-        "sub": "A four-course grill and seafood lunch, 150 AED, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk."
+        "sub": "A four-course grill and seafood lunch, 150 AED, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk.",
+        "trustStrip": [
+          "★ 4.7 on Google · 3,720 reviews",
+          "Quiet enough to actually talk",
+          "{{BUSINESS_FACT}}",
+          "Free valet parking"
+        ]
       },
       "price": {
         "h1": "An Address Beach Resort dinner, at lunch prices",
-        "sub": "Same grill, same fish bar, same terrace, same view — just before 6 PM. 20% off everything à la carte, daily 2 to 6 PM."
+        "sub": "Same grill, same fish bar, same terrace, same view — just before 6 PM. 20% off everything à la carte, daily 2 to 6 PM.",
+        "trustStrip": [
+          "★ 4.7 on Google · 3,720 reviews",
+          "Same kitchen, same menu as dinner",
+          "Free valet parking"
+        ]
       }
     },
     "defaultVariant": "view",
@@ -39,11 +56,6 @@
       "Reserve my table"
     ],
     "ctaMicrocopy": "30 seconds. No prepayment.",
-    "trustStrip": [
-      "★ 4.7 on Google · 3,720 reviews",
-      "Terrace or indoor — your call",
-      "Free valet parking"
-    ],
     "media": {
       "video": "/video/hero.mp4",
       "poster": "/img/hero-poster.webp",
@@ -140,7 +152,17 @@
           "label": "Time"
         },
         "guests": {
-          "label": "Guests"
+          "label": "Guests",
+          "more": "7+",
+          "moreLabel": "How many?"
+        },
+        "seating": {
+          "label": "Where would you like to sit?",
+          "options": [
+            { "value": "terrace", "label": "Terrace", "default": false },
+            { "value": "indoor", "label": "Indoor", "default": false },
+            { "value": "any", "label": "No preference", "default": true }
+          ]
         }
       },
       "cta": "Continue"
@@ -209,7 +231,7 @@
   },
   "thanks": {
     "h1": "Got it. The host is checking your table.",
-    "summaryTemplate": "{{GUESTS}} guests · {{DATE}} at {{TIME}} · {{OFFER}}",
+    "summaryTemplate": "{{GUESTS}} guests · {{DATE}} at {{TIME}} · {{SEATING}} · {{OFFER}}",
     "steps": [
       "The host checks availability for that time.",
       "You get a WhatsApp message confirming it — usually within 15 minutes.",
@@ -222,7 +244,8 @@
   },
   "stickyCta": {
     "label": "Request my table",
-    "note": "★ 4.7 · No prepayment"
+    "note": "★ 4.7 · No prepayment",
+    "noteResume": "Finish your request →"
   },
   "links": {
     "instagram": {

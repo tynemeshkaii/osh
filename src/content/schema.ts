@@ -200,10 +200,10 @@ export interface Thanks {
 }
 
 export interface StickyNote {
-  /** While today's last seating is still ahead (restaurant zone). */
-  today: string;
-  /** After it has passed. */
-  tomorrow: string;
+  /** The deal, bold: what you get and for how much. */
+  offer: string;
+  /** One-line hook under it, taken from the ad angle. */
+  hook: string;
 }
 
 export interface StickyCta {

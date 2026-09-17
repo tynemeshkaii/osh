@@ -235,9 +235,9 @@
   "stickyCta": {
     "label": "Get a table",
     "note": {
-      "view": { "today": "Today, seatings 2–5 PM · 150 AED", "tomorrow": "Tomorrow, seatings 2–5 PM · 150 AED" },
-      "business": { "today": "Today, seatings 2–5 PM · 150 AED", "tomorrow": "Tomorrow, seatings 2–5 PM · 150 AED" },
-      "price": { "today": "Today, seatings 2–5 PM · 20% off", "tomorrow": "Tomorrow, seatings 2–5 PM · 20% off" }
+      "view": { "offer": "Four courses · 150 AED", "hook": "Terrace above the marina" },
+      "business": { "offer": "Four courses · 150 AED", "hook": "Quiet enough to talk" },
+      "price": { "offer": "20% off à la carte", "hook": "Same terrace, before 6 PM" }
     },
     "noteResume": "Finish your request →"
   },

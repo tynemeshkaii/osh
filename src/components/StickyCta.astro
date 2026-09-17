@@ -10,11 +10,14 @@ const { stickyCta } = content;
   aria-hidden="true"
 >
   <div class="mx-auto flex max-w-[640px] items-center justify-between gap-4">
-    <!-- One note per hero variant (the offer differs); the html[data-variant] CSS shows the active one.
-         Renders "today" and swaps to "tomorrow" once the last seating has passed. -->
-    <span class="min-w-0 text-[13px] leading-[1.45] text-muted" data-sticky-note data-note-resume={stickyCta.noteResume}>
+    <!-- Price-tag pattern: the deal in bold, the hook under it, the button beside.
+         One note per hero variant (the offer differs); html[data-variant] CSS shows the active one. -->
+    <span class="min-w-0" data-sticky-note data-note-resume={stickyCta.noteResume}>
       {HERO_VARIANTS.map((id) => (
-        <span class="truncate" data-hero-variant={id} data-note-tomorrow={stickyCta.note[id].tomorrow}>{stickyCta.note[id].today}</span>
+        <span data-hero-variant={id}>
+          <span class="block truncate text-small font-medium text-ink">{stickyCta.note[id].offer}</span>
+          <span class="block truncate text-[12px] leading-[1.4] text-muted">{stickyCta.note[id].hook}</span>
+        </span>
       ))}
     </span>
     <a href="#booking" class="inline-flex min-h-[48px] shrink-0 items-center justify-center whitespace-nowrap rounded-pill bg-accent px-5 text-body font-medium text-accent-ink" data-cta="sticky">
@@ -24,8 +27,6 @@ const { stickyCta } = content;
 </div>
 
 <script>
-  import { nowInRestaurantZone, isSlotOpen, TIME_SLOTS } from '@/lib/validation';
-
   // Show after the hero has scrolled away; hide while the form is on screen.
   const bar = document.getElementById('sticky-cta');
   const hero = document.querySelector<HTMLElement>('[data-hero]');
@@ -45,22 +46,16 @@ const { stickyCta } = content;
     new IntersectionObserver(([e]) => { formVisible = !!e?.isIntersecting; apply(); }, { threshold: 0 }).observe(form);
   }
 
+  // Once the visitor has touched the form, the bar nudges them back to it:
+  // the offer/hook pair collapses to one line. `booking:start` is dispatched
+  // by BookingForm on the first input.
   const note = bar?.querySelector<HTMLElement>('[data-sticky-note]');
-  const variantNotes = Array.from(note?.querySelectorAll<HTMLElement>('[data-hero-variant]') ?? []);
-
-  // Same rule as the form's "Today" pill: once the last seating has passed in
-  // the restaurant's zone, the honest nudge is tomorrow's window.
-  const now = nowInRestaurantZone();
-  const lastSlot = TIME_SLOTS[TIME_SLOTS.length - 1] ?? '';
-  if (!isSlotOpen(now.date, lastSlot, now)) {
-    for (const el of variantNotes) if (el.dataset.noteTomorrow) el.textContent = el.dataset.noteTomorrow;
-  }
-
-  // Once the visitor has touched the form, the bar nudges them back to it.
-  // `booking:start` is dispatched by BookingForm on the first input.
   if (note?.dataset.noteResume) {
     document.addEventListener('booking:start', () => {
-      for (const el of variantNotes) el.textContent = note.dataset.noteResume!;
+      for (const el of note.querySelectorAll<HTMLElement>('[data-hero-variant]')) {
+        el.textContent = note.dataset.noteResume!;
+        el.className = 'block truncate text-small font-medium text-ink';
+      }
     }, { once: true });
   }
 </script>

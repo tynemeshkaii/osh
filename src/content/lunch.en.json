@@ -107,26 +107,26 @@
     ]
   },
   "dishes": {
-    "heading": "Come hungry",
-    "sub": "Charcoal grill, tandoor and a fish bar in one open kitchen. Three plates to start with — the rest is on the table.",
+    "heading": "Cooked over charcoal, in front of you",
+    "sub": "The kitchen is open — the grill and tandoor run all lunch. Three plates worth crossing the marina for.",
     "items": [
       {
         "src": "/img/dish-kebab.webp",
         "alt": "Lamb kebab skewers from the charcoal grill",
         "name": "Lamb kebab",
-        "note": "From the charcoal grill"
+        "note": "Charcoal, sumac onion, flatbread"
       },
       {
         "src": "/img/dish-salmon-carpaccio.webp",
         "alt": "Salmon carpaccio with citrus",
         "name": "Salmon carpaccio",
-        "note": "From the fish bar"
+        "note": "Citrus, capers, olive oil"
       },
       {
         "src": "/img/dish-tuna.webp",
         "alt": "Seared tuna with avocado and lime",
         "name": "Seared tuna",
-        "note": "Avocado, lime"
+        "note": "Avocado, lime, sesame"
       }
     ]
   },

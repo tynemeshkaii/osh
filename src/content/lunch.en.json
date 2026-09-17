@@ -54,7 +54,7 @@
     "whatsappMessage": "Hi OSH Del Mar — I'd like to request a lunch table."
   },
   "socialProof": {
-    "heading": "People come back for the terrace",
+    "heading": "Came for the view. Stayed for the grill.",
     "ratingLine": "★ 4.7 on Google · read the 3,720 reviews →",
     "quotes": [
       {
@@ -78,7 +78,7 @@
   },
   "gallery": {
     "heading": "Your table, above the marina",
-    "sub": "The terrace sits on the M floor of Address Beach Resort, facing Dubai Marina and Ain Dubai. Lunch starts at 2. Last seating at 5, when the light is softest.",
+    "sub": "The M floor of Address Beach Resort, facing the marina and Ain Dubai.",
     "items": [
       {
         "src": "/img/terrace-day.webp",
@@ -96,7 +96,7 @@
   },
   "dishes": {
     "heading": "Cooked over charcoal, in front of you",
-    "sub": "The kitchen is open — the grill and tandoor run all lunch. Three plates worth crossing the marina for.",
+    "sub": "The kitchen is open — the grill and tandoor run all lunch. Plates worth crossing the marina for.",
     "items": [
       {
         "src": "/img/dish-kebab.webp",
@@ -119,11 +119,11 @@
     ]
   },
   "form": {
-    "heading": "Request your table",
-    "sub": "Two steps, 30 seconds. We confirm on WhatsApp.",
+    "heading": "Your table on the terrace",
+    "sub": "Takes 30 seconds. The host replies on WhatsApp — usually within 15 minutes.",
     "progress": {
-      "step1": "Step 1 of 2",
-      "step2": "Step 2 of 2",
+      "step1": "1 of 2",
+      "step2": "2 of 2",
       "back": "Back"
     },
     "step1": {
@@ -158,7 +158,7 @@
       "cta": "Continue"
     },
     "step2": {
-      "heading": "Where should we confirm?",
+      "heading": "Last thing — where do we message you?",
       "fields": {
         "name": {
           "label": "Your name",
@@ -167,7 +167,7 @@
         },
         "phone": {
           "label": "WhatsApp number",
-          "helper": "This is where the confirmation goes.",
+          "helper": "The host will reply here.",
           "placeholder": "+971 50 123 4567",
           "required": true
         },
@@ -193,10 +193,10 @@
           "required": false
         }
       },
-      "cta": "Request my table",
+      "cta": "Ask the host for this table",
       "ctaLoading": "Sending…",
-      "microcopy": "No prepayment. We'll confirm on WhatsApp within 15 minutes — or first thing in the morning if it's after 11 PM.",
-      "consentNote": "By requesting a table you agree to be contacted on WhatsApp about this reservation."
+      "microcopy": "No prepayment. Free valet. The host replies within 15 minutes — or first thing in the morning if it's late.",
+      "consentNote": "We'll message you on WhatsApp about this table — nothing else."
     },
     "errors": {
       "nameRequired": "We'll need a name for the table.",

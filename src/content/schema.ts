@@ -81,7 +81,7 @@ export interface DishItem {
 export interface Dishes {
   heading: string;
   sub: string;
-  /** Exactly three cards; all square (1 / 1). */
+  /** All square (1 / 1); the carousel takes any count. */
   items: DishItem[];
 }
 

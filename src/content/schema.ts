@@ -197,9 +197,17 @@ export interface Thanks {
   instagram: string;
 }
 
+export interface StickyNote {
+  /** While today's last seating is still ahead (restaurant zone). */
+  today: string;
+  /** After it has passed. */
+  tomorrow: string;
+}
+
 export interface StickyCta {
   label: string;
-  note: string;
+  /** Per hero variant: the offer differs (set menu vs. à la carte discount). */
+  note: Record<HeroVariantId, StickyNote>;
   /** Replaces `note` once the visitor has started the form. */
   noteResume: string;
 }

@@ -230,7 +230,11 @@
   },
   "stickyCta": {
     "label": "Get a table",
-    "note": "★ 4.7 · No prepayment",
+    "note": {
+      "view": { "today": "Today, 2–5 PM · 150 AED", "tomorrow": "Tomorrow, 2–5 PM · 150 AED" },
+      "business": { "today": "Today, 2–5 PM · 150 AED", "tomorrow": "Tomorrow, 2–5 PM · 150 AED" },
+      "price": { "today": "Today, 2–5 PM · 20% off", "tomorrow": "Tomorrow, 2–5 PM · 20% off" }
+    },
     "noteResume": "Finish your request →"
   },
   "links": {

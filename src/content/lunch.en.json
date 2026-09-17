@@ -124,7 +124,7 @@
     "progress": {
       "step1": "1 of 2",
       "step2": "2 of 2",
-      "back": "Back"
+      "back": "Edit"
     },
     "step1": {
       "heading": "When shall we expect you?",
@@ -134,7 +134,7 @@
           "quick": {
             "today": "Today",
             "tomorrow": "Tomorrow",
-            "pick": "Pick a date"
+            "pick": "More dates"
           },
           "todayClosed": "Today's last seating has passed. Tomorrow?"
         },

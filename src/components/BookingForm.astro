@@ -52,18 +52,25 @@ const pillClass =
   <form id="booking-form" class="scroll-mt-4 rounded-card border border-line bg-surface p-5 md:p-6" novalidate>
     <input type="hidden" name="variant" value="" data-variant-field />
 
-    <fieldset data-step="1" class="border-0 p-0" aria-labelledby="step1-heading">
+    <fieldset data-step="1" class="min-w-0 border-0 p-0" aria-labelledby="step1-heading">
       <p class="text-small text-muted">{progress.step1}</p>
       <h3 id="step1-heading" class="mt-1 text-h3">{step1.heading}</h3>
 
-      <!-- Date: Today / Tomorrow / Pick a date. The native input is the single
-           source of the value; quick picks just fill it and stay hidden. -->
-      <fieldset class="mt-5 scroll-mt-8 border-0 p-0" data-date-group>
+      <!-- Date: a scrollable strip of the next days (built by the script from the
+           restaurant's clock — Today, Tomorrow, then "Sat 20"…), plus "More dates"
+           which reveals the native input. The native input is the single source
+           of the value; chips just fill it. The nearest open day is preselected. -->
+      <!-- min-w-0: a fieldset defaults to min-content width, which the non-wrapping strip would blow past the card. -->
+      <fieldset class="mt-5 min-w-0 scroll-mt-8 border-0 p-0" data-date-group>
         <legend class={labelClass}>{step1.fields.date.label}</legend>
-        <div class="mt-2 flex flex-wrap gap-2" role="group">
-          <button type="button" class={pillClass} data-date-quick="today" aria-pressed="false">{step1.fields.date.quick.today}</button>
-          <button type="button" class={pillClass} data-date-quick="tomorrow" aria-pressed="false">{step1.fields.date.quick.tomorrow}</button>
-          <button type="button" class={pillClass} data-date-quick="pick" aria-pressed="false">{step1.fields.date.quick.pick}</button>
+        <div
+          class="-mx-5 mt-2 flex snap-x gap-2 overflow-x-auto px-5 [scroll-padding-inline:20px] [scrollbar-width:none] md:-mx-6 md:px-6 [&::-webkit-scrollbar]:hidden"
+          role="group"
+          data-date-strip
+          data-label-today={step1.fields.date.quick.today}
+          data-label-tomorrow={step1.fields.date.quick.tomorrow}
+        >
+          <button type="button" class:list={[pillClass, 'snap-start']} data-date-quick="pick" aria-pressed="false">{step1.fields.date.quick.pick}</button>
         </div>
         <p class="mt-2 text-small text-muted" data-today-closed hidden>{step1.fields.date.todayClosed}</p>
         <label for="f-date" class="sr-only">{step1.fields.date.label}</label>
@@ -75,9 +82,9 @@ const pillClass =
            travels with the form and keyboard/screen-reader users get a group. -->
       <fieldset class="mt-5 scroll-mt-8 border-0 p-0" data-time-group>
         <legend class={labelClass}>{step1.fields.time.label}</legend>
-        <div class="mt-2 grid grid-cols-3 gap-2">
+        <div class="mt-2 grid grid-cols-4 gap-2">
           {slots.map((s) => (
-            <label class={pillClass} data-slot={s.value}>
+            <label class:list={[pillClass, 'px-2!']} data-slot={s.value}>
               <input type="radio" name="time" value={s.value} class="sr-only" />
               <span>{s.label}</span>
             </label>
@@ -120,11 +127,13 @@ const pillClass =
     </fieldset>
 
     <fieldset data-step="2" class="border-0 p-0" aria-labelledby="step2-heading" hidden>
-      <div class="flex items-center justify-between">
-        <p class="text-small text-muted">{progress.step2}</p>
-        <button type="button" class="min-h-[44px] text-small font-medium underline underline-offset-4" data-step-back>{progress.back}</button>
-      </div>
+      <p class="text-small text-muted">{progress.step2}</p>
       <h3 id="step2-heading" class="mt-1 text-h3">{step2.heading}</h3>
+      <!-- What they picked on step 1 stays in view while they type; "Edit" goes back. -->
+      <div class="mt-3 flex items-start justify-between gap-3 rounded-card bg-bg px-4 py-3">
+        <p class="text-small font-medium" data-step-summary></p>
+        <button type="button" class="-my-1 min-h-[32px] shrink-0 text-small font-medium underline underline-offset-4" data-step-back>{progress.back}</button>
+      </div>
 
       <div class="mt-5 grid gap-4">
         <div>
@@ -253,10 +262,33 @@ const pillClass =
     if (variant === 'view') preselect('seating', 'terrace');
     if (variant === 'price') preselect('offer', 'alacarte');
 
-    // --- Date: quick picks fill the native input; "Pick a date" reveals it. ---
+    // --- Date: day chips fill the native input; "More dates" reveals it. ---
     const dateInput = form.querySelector<HTMLInputElement>('[name="date"]')!;
-    const quickBtns = Array.from(form.querySelectorAll<HTMLButtonElement>('[data-date-quick]'));
+    const strip = form.querySelector<HTMLElement>('[data-date-strip]')!;
+    const pickBtn = strip.querySelector<HTMLButtonElement>('[data-date-quick="pick"]')!;
     const todayClosedNote = form.querySelector<HTMLElement>('[data-today-closed]');
+
+    // Chips for the next DAYS_AHEAD days, keyed by ISO date. Built once per page
+    // load from the restaurant's clock, so "Today" is Dubai's today.
+    const DAYS_AHEAD = 10;
+    const today = nowInRestaurantZone().date;
+    const dayLabel = (iso: string, i: number) => {
+      if (i === 0) return strip.dataset.labelToday!;
+      if (i === 1) return strip.dataset.labelTomorrow!;
+      // Noon avoids any DST/offset edge when turning the calendar date into a weekday.
+      return new Date(`${iso}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
+    };
+    for (let i = 0; i < DAYS_AHEAD; i++) {
+      const iso = addDaysIso(today, i);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `${pickBtn.className}`;
+      btn.dataset.dateQuick = iso;
+      btn.setAttribute('aria-pressed', 'false');
+      btn.textContent = dayLabel(iso, i);
+      strip.insertBefore(btn, pickBtn);
+    }
+    const quickBtns = Array.from(strip.querySelectorAll<HTMLButtonElement>('[data-date-quick]'));
     const slotLabels = Array.from(form.querySelectorAll<HTMLLabelElement>('[data-slot]'));
     const lastSlot = slotLabels[slotLabels.length - 1]?.dataset.slot ?? '';
 
@@ -280,7 +312,7 @@ const pillClass =
     // "Today" only while a seating is still ahead in the restaurant's zone.
     const refreshToday = () => {
       const now = nowInRestaurantZone();
-      const todayBtn = quickBtns.find((b) => b.dataset.dateQuick === 'today');
+      const todayBtn = quickBtns.find((b) => b.dataset.dateQuick === now.date);
       const closed = !isSlotOpen(now.date, lastSlot, now);
       if (todayBtn) todayBtn.disabled = closed;
       if (todayClosedNote) todayClosedNote.hidden = !closed;
@@ -291,14 +323,14 @@ const pillClass =
     quickBtns.forEach((btn) =>
       btn.addEventListener('click', () => {
         const which = btn.dataset.dateQuick!;
-        const { now } = refreshToday();
+        refreshToday();
         if (which === 'pick') {
           dateInput.hidden = false;
           dateInput.focus();
           try { dateInput.showPicker?.(); } catch { /* not supported / needs gesture — the input is visible anyway */ }
         } else {
           dateInput.hidden = true;
-          dateInput.value = which === 'today' ? now.date : addDaysIso(now.date, 1);
+          dateInput.value = which;
           dateInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
         setQuick(which);
@@ -306,14 +338,22 @@ const pillClass =
       }),
     );
 
-    // Typing/choosing a date in the native input keeps "Pick a date" pressed.
+    // Typing/choosing a date in the native input keeps "More dates" pressed.
     dateInput.addEventListener('input', () => {
       if (!dateInput.hidden) setQuick('pick');
       refreshSlots();
     });
 
-    refreshToday();
-    refreshSlots();
+    // Preselect the nearest open day so the usual visit is one tap (the time).
+    // Set silently: a default is not the visitor starting the form.
+    {
+      const { now, closed } = refreshToday();
+      if (!dateInput.value) {
+        dateInput.value = closed ? addDaysIso(now.date, 1) : now.date;
+        setQuick(dateInput.value);
+      }
+      refreshSlots();
+    }
 
     // --- Guests: pills fill the native input; "7+" reveals it. ---
     const guestsInput = form.querySelector<HTMLInputElement>('[name="guests"]')!;
@@ -430,10 +470,13 @@ const pillClass =
       if (n === 2) step2.querySelector<HTMLElement>('input:not([type="hidden"])')?.focus({ preventScroll: true });
     };
 
+    const stepSummary = step2.querySelector<HTMLElement>('[data-step-summary]');
     form.querySelector('[data-step-next]')?.addEventListener('click', () => {
       refreshSlots();
-      const errors = validateStep1(read());
+      const input = read();
+      const errors = validateStep1(input);
       if (Object.keys(errors).length) return showErrors(step1, errors);
+      if (stepSummary) stepSummary.textContent = formatSummary(input);
       showStep(2);
     });
 
@@ -467,20 +510,25 @@ const pillClass =
       }
     });
 
-    const showThanks = (v: { guests: number; date: string; time: string; seating: string; offer: string }) => {
+    // "2 guests · Sat 20 Sep at 3:00 PM · Terrace · Four courses — 150 AED".
+    // Used on step 2 (what they picked) and on the thank-you panel.
+    const formatSummary = (v: { guests: number | string; date: string; time: string; seating: string; offer: string }) => {
       const date = new Date(`${v.date}T${v.time}:00`);
       // "No preference" is not worth a segment: drop {{SEATING}} and its separator.
       const template = v.seating === 'any'
         ? cfg.summaryTemplate.replace(/\s*·\s*\{\{SEATING\}\}/, '')
         : cfg.summaryTemplate;
-      const summary = template
+      return template
         .replace('{{GUESTS}}', String(v.guests))
         .replace('{{DATE}}', date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }))
         .replace('{{TIME}}', cfg.slotLabels[v.time] ?? v.time)
         .replace('{{SEATING}}', cfg.seatingLabels[v.seating] ?? v.seating)
         .replace('{{OFFER}}', cfg.offerLabels[v.offer] ?? v.offer);
+    };
+
+    const showThanks = (v: { guests: number; date: string; time: string; seating: string; offer: string }) => {
       const summaryEl = thanksPanel.querySelector<HTMLElement>('[data-thanks-summary]');
-      if (summaryEl) summaryEl.textContent = summary;
+      if (summaryEl) summaryEl.textContent = formatSummary(v);
 
       form.hidden = true;
       thanksPanel.hidden = false;

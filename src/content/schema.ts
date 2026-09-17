@@ -50,6 +50,8 @@ export interface SocialProof {
   heading: string;
   ratingLine: string;
   quotes: Quote[];
+  /** Short lead-in above the press marks, e.g. "Featured in". */
+  pressLabel: string;
   pressCaption: string;
 }
 

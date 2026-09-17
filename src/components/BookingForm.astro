@@ -163,8 +163,9 @@ const pillClass =
       <button type="submit" class:list={['mt-6', primaryBtn]} data-submit>
         {step2.cta}
       </button>
-      <p class="mt-3 text-small text-muted">{step2.consentNote}</p>
-      <p class="mt-2 text-small text-muted">{step2.microcopy}</p>
+      <!-- Reassurance first (what happens next), consent last. -->
+      <p class="mt-3 text-small text-muted">{step2.microcopy}</p>
+      <p class="mt-2 text-small text-muted">{step2.consentNote}</p>
     </fieldset>
   </form>
 
@@ -235,7 +236,18 @@ const pillClass =
     const variantField = form.querySelector<HTMLInputElement>('[data-variant-field]');
 
     // Which hero variant the visitor saw — travels with the request.
-    if (variantField) variantField.value = document.documentElement.dataset.variant ?? '';
+    const variant = document.documentElement.dataset.variant ?? '';
+    if (variantField) variantField.value = variant;
+
+    // Defaults follow the promise the visitor clicked on: the "view" ad sold the
+    // terrace, the "price" ad sold 20% off à la carte. Other variants keep the
+    // content defaults. One tap still switches either.
+    const preselect = (name: string, value: string) => {
+      const radio = form.querySelector<HTMLInputElement>(`[name="${name}"][value="${value}"]`);
+      if (radio) radio.checked = true;
+    };
+    if (variant === 'view') preselect('seating', 'terrace');
+    if (variant === 'price') preselect('offer', 'alacarte');
 
     // --- Date: quick picks fill the native input; "Pick a date" reveals it. ---
     const dateInput = form.querySelector<HTMLInputElement>('[name="date"]')!;

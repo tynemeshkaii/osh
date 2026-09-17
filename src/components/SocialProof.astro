@@ -6,7 +6,6 @@ const { socialProof, links } = content;
 const GOOGLE = 'Google';
 const ratingLine = finalText(socialProof.ratingLine);
 const quotes = finalItems(socialProof.quotes, ['text', 'author']);
-const press = socialProof.pressCaption.split(' · ');
 ---
 
 <Section id="proof" heading={socialProof.heading} surface>
@@ -31,10 +30,4 @@ const press = socialProof.pressCaption.split(' · ');
       ))}
     </ul>
   )}
-
-  <!-- Press logos: text marks until real SVGs arrive. -->
-  <p class="mt-8 text-small text-muted">{socialProof.pressLabel}</p>
-  <ul class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3 text-small font-medium uppercase tracking-[0.08em] text-muted" aria-label={socialProof.pressCaption}>
-    {press.map((name) => <li>{name}</li>)}
-  </ul>
 </Section>

@@ -51,7 +51,7 @@
       "alt": "The terrace at OSH Del Mar above Dubai Marina"
     },
     "ctaSecondary": "or message us on WhatsApp",
-    "whatsappMessage": "Hi OSH Del Mar — I'd like to request a lunch table."
+    "whatsappMessage": "Hi OSH Del Mar — I'd like to request a table."
   },
   "socialProof": {
     "heading": "Came for the view. Stayed for the grill.",
@@ -120,14 +120,14 @@
   },
   "form": {
     "heading": "Your table on the terrace",
-    "sub": "Takes 30 seconds. The host replies on WhatsApp — usually within 15 minutes.",
+    "sub": "Choose a time, leave your WhatsApp. The host confirms within 15 minutes.",
     "progress": {
       "step1": "1 of 2",
       "step2": "2 of 2",
       "back": "Back"
     },
     "step1": {
-      "heading": "When are you coming?",
+      "heading": "When shall we expect you?",
       "fields": {
         "date": {
           "label": "Date",
@@ -136,7 +136,7 @@
             "tomorrow": "Tomorrow",
             "pick": "Pick a date"
           },
-          "todayClosed": "Today's last seating has passed — tomorrow?"
+          "todayClosed": "Today's last seating has passed. Tomorrow?"
         },
         "time": {
           "label": "Time"
@@ -158,7 +158,7 @@
       "cta": "Continue"
     },
     "step2": {
-      "heading": "Last thing — where do we message you?",
+      "heading": "Where can the host reach you?",
       "fields": {
         "name": {
           "label": "Your name",
@@ -167,12 +167,12 @@
         },
         "phone": {
           "label": "WhatsApp number",
-          "helper": "The host will reply here.",
+          "helper": "Your confirmation will come here.",
           "placeholder": "+971 50 123 4567",
           "required": true
         },
         "offer": {
-          "label": "Which lunch?",
+          "label": "Your offer",
           "options": [
             {
               "value": "set",
@@ -193,17 +193,17 @@
           "required": false
         }
       },
-      "cta": "Ask the host for this table",
+      "cta": "Book a table",
       "ctaLoading": "Sending…",
-      "microcopy": "No prepayment. Free valet. The host replies within 15 minutes — or first thing in the morning if it's late.",
-      "consentNote": "We'll message you on WhatsApp about this table — nothing else."
+      "microcopy": "No prepayment, no card. The host replies within 15 minutes, or first thing in the morning for late-night requests.",
+      "consentNote": "We'll only message you on WhatsApp about this request."
     },
     "errors": {
       "nameRequired": "We'll need a name for the table.",
       "phoneRequired": "We confirm on WhatsApp, so we need a number.",
       "phoneInvalid": "That number doesn't look right. Include the country code, like +971 50 123 4567.",
       "guestsInvalid": "Guests: a number from 1 to 20. For bigger groups, message us on WhatsApp.",
-      "offerRequired": "Pick one of the two lunch options.",
+      "offerRequired": "Pick one of the offers.",
       "slotUnavailable": "That slot is full. The closest we have is {{ALT_TIME}} — or try another day.",
       "network": "That didn't go through. Check your connection and try again — everything you typed is still here.",
       "server": "Something went wrong on our side. Message the host on WhatsApp and they'll sort it out right now.",
@@ -212,19 +212,19 @@
       "timePassed": "That time has already passed today. Pick a later slot, or tomorrow."
     },
     "whatsappBlock": {
-      "heading": "Something unusual?",
+      "heading": "A larger party, or a special occasion?",
       "body": "A table for twelve, a birthday, a question about the terrace — talk to the host directly.",
       "cta": "Message us on WhatsApp",
-      "prefilledMessage": "Hi OSH Del Mar — I'd like to ask about a lunch table."
+      "prefilledMessage": "Hi OSH Del Mar — I'd like to ask about a table."
     },
     "thanksNote": "Draft: nothing was sent. The real request will go to the host once the backend is connected."
   },
   "thanks": {
-    "h1": "Got it. The host is checking your table.",
+    "h1": "Thank you. The host is checking your table.",
     "summaryTemplate": "{{GUESTS}} guests · {{DATE}} at {{TIME}} · {{SEATING}} · {{OFFER}}",
     "steps": [
       "The host checks availability for that time.",
-      "You get a WhatsApp message confirming it — usually within 15 minutes.",
+      "The confirmation arrives on WhatsApp, usually within 15 minutes.",
       "Come to the M floor at Address Beach Resort. Valet is free."
     ],
     "cta": "Open WhatsApp",

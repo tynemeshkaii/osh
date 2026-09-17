@@ -139,8 +139,10 @@ const pillClass =
           <p id="e-phone" class={errorClass} data-error-for="phone" hidden></p>
         </div>
 
-        <!-- Offer: preselected, one tap to switch. Asked after contact, not before. -->
-        <fieldset class="border-0 p-0">
+        <!-- Offer: not shown (client decision, Sept 2026) — it follows the hero variant
+             (view/business → set menu, price → à la carte) and still travels with the
+             request and into the thank-you summary. The radios stay so the value is real. -->
+        <fieldset class="border-0 p-0" hidden>
           <legend class={labelClass}>{step2.fields.offer.label}</legend>
           <div class="mt-2 grid gap-2">
             {step2.fields.offer.options.map((opt) => (

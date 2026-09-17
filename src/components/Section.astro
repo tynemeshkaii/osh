@@ -4,8 +4,8 @@ interface Props {
   id?: string;
   heading: string;
   sub?: string | null;
-  /** Optional paragraph after the sub — for blocks that need a few sentences of atmosphere, not just a lead-in. */
-  body?: string | null;
+  /** Optional paragraphs after the sub — for blocks that need a few sentences of atmosphere, not just a lead-in. */
+  body?: string[] | null;
   class?: string;
   surface?: boolean;
 }
@@ -17,7 +17,7 @@ const { id, heading, sub, body, class: className = '', surface = false } = Astro
     <header class="mb-6 md:mb-8">
       <h2 class="text-balance text-h2 md:text-[32px] md:leading-[1.15]">{heading}</h2>
       {sub && <p class="mt-3 text-body text-muted">{sub}</p>}
-      {body && <p class="mt-4 text-body text-pretty">{body}</p>}
+      {body?.map((p) => <p class="mt-4 text-body text-pretty">{p}</p>)}
     </header>
     <slot />
   </div>

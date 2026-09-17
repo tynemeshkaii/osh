@@ -76,18 +76,21 @@
   },
   "gallery": {
     "heading": "Your table, above the marina",
-    "sub": "A rail seat, a sea breeze, and nowhere you need to be.",
-    "body": "Between the marina and Ain Dubai, on the M floor of Address Beach Resort. Quiet enough to talk. Open kitchen behind you, charcoal and fresh fish in the air. Four courses that take as long as you want them to.",
+    "sub": "Sit down in daylight. Get up when the marina has switched on its lights.",
+    "body": [
+      "At two the terrace is wide awake — sun on the water, yachts moving below, the charcoal grill already going behind you. Sea breeze off the marina, Ain Dubai straight ahead, and a table that's quiet enough to actually talk.",
+      "By five it slows down. The light softens, the towers start to glow, the terrace lamps come on one by one. Same rail, same view — just warmer, closer, and almost to yourself. Order coffee, then stay a while."
+    ],
     "items": [
       {
         "src": "/img/terrace-day.webp",
         "alt": "The terrace at OSH Del Mar in daylight, facing Dubai Marina",
-        "caption": "2 PM — the marina at full speed"
+        "caption": "2 PM — sun, breeze, the marina at full speed"
       },
       {
         "src": "/img/terrace-evening.webp",
         "alt": "The terrace at OSH Del Mar lit up in the evening",
-        "caption": "5 PM — the same rail, a quieter terrace"
+        "caption": "5 PM — lamps on, towers lit, the terrace to yourself"
       }
     ]
   },

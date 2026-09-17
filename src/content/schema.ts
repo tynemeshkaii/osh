@@ -14,7 +14,7 @@ export const HERO_VARIANTS: readonly HeroVariantId[] = ['view', 'business', 'pri
 export interface HeroVariant {
   h1: string;
   sub: string;
-  /** Trust line under the CTA, rendered as ONE line (parts joined with " · "). Per variant: a business guest wants different proof than a view guest. */
+  /** Optional trust line under the CTA, ONE line (parts joined with " · "). Empty → nothing renders. The Google rating lives in SocialProof only. */
   trustStrip: string[];
 }
 

@@ -24,29 +24,17 @@
       "view": {
         "h1": "Lunch on the terrace above Dubai Marina",
         "sub": "Four courses from the charcoal grill and fish bar, 150 AED per person. Daily 2 to 6 PM — the last seating, at 5, gets the softest light of the day.",
-        "trustStrip": [
-          "★ 4.7 on Google · 3,720 reviews",
-          "Terrace or indoor — your call",
-          "Free valet parking"
-        ]
+        "trustStrip": ["★ 4.7 on Google · 3,720 reviews"]
       },
       "business": {
         "h1": "Some deals close better with a sea view",
         "sub": "A four-course grill and seafood lunch, 150 AED per person, on the terrace above Dubai Marina. Daily 2 to 6 PM. Free valet, and quiet enough to actually talk.",
-        "trustStrip": [
-          "★ 4.7 on Google · 3,720 reviews",
-          "{{BUSINESS_FACT}}",
-          "Free valet parking"
-        ]
+        "trustStrip": ["★ 4.7 on Google", "{{BUSINESS_FACT}}"]
       },
       "price": {
         "h1": "An Address Beach Resort dinner, at lunch prices",
         "sub": "Same grill, same fish bar, same terrace, same view — just before 6 PM. 20% off everything à la carte, daily 2 to 6 PM.",
-        "trustStrip": [
-          "★ 4.7 on Google · 3,720 reviews",
-          "Last seating at 5 PM",
-          "Free valet parking"
-        ]
+        "trustStrip": ["★ 4.7 on Google · Last seating 5 PM"]
       }
     },
     "defaultVariant": "view",
@@ -56,7 +44,7 @@
       "I want that view",
       "Check terrace availability"
     ],
-    "ctaMicrocopy": "30 seconds · No prepayment · Confirmed on WhatsApp",
+    "ctaMicrocopy": "No prepayment · Confirmed on WhatsApp",
     "media": {
       "video": "/video/hero.mp4",
       "poster": "/img/hero-poster.webp",

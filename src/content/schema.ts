@@ -14,7 +14,7 @@ export const HERO_VARIANTS: readonly HeroVariantId[] = ['view', 'business', 'pri
 export interface HeroVariant {
   h1: string;
   sub: string;
-  /** Trust line under the CTA. Per variant: a business guest wants different proof than a view guest. */
+  /** Trust line under the CTA, rendered as ONE line (parts joined with " · "). Per variant: a business guest wants different proof than a view guest. */
   trustStrip: string[];
 }
 
@@ -31,6 +31,7 @@ export interface Hero {
   defaultVariant: HeroVariantId;
   cta: string;
   ctaAlternatives: string[];
+  /** Objection killers under the CTA. "A · B · C" — split on " · " and rendered as pills. */
   ctaMicrocopy: string;
   /** Secondary hero CTA: opens WhatsApp with `whatsappMessage` prefilled. */
   ctaSecondary: string;

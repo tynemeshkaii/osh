@@ -4,8 +4,13 @@ import { asset } from '@/lib/assets';
 import { whatsappHref } from '@/lib/links';
 
 const { hero, footer } = content;
-// One trust strip per variant; placeholders (e.g. {{BUSINESS_FACT}}) drop out of non-draft builds.
-const trust = Object.fromEntries(HERO_VARIANTS.map((id) => [id, finalList(hero.variants[id].trustStrip)]));
+const SEP = ' · ';
+// One trust line per variant; placeholders (e.g. {{BUSINESS_FACT}}) drop out of non-draft builds.
+const trust = Object.fromEntries(
+  HERO_VARIANTS.map((id) => [id, finalList(hero.variants[id].trustStrip).join(SEP)]),
+) as Record<(typeof HERO_VARIANTS)[number], string>;
+// Objection killers as pills — they must stay readable on any video frame.
+const pills = hero.ctaMicrocopy.split(SEP);
 const waHref = whatsappHref(footer.phone, hero.whatsappMessage);
 const poster = asset(hero.media.poster);
 const video = asset(hero.media.video);
@@ -45,7 +50,11 @@ const video = asset(hero.media.video);
     >
       {hero.cta}
     </a>
-    <p class="mt-3 text-small opacity-80">{hero.ctaMicrocopy}</p>
+    <ul class="mt-3 flex flex-wrap gap-2" aria-label={hero.ctaMicrocopy}>
+      {pills.map((pill) => (
+        <li class="rounded-pill border border-white/25 bg-white/15 px-3 py-1 text-[13px] leading-[1.4] font-medium backdrop-blur-sm">{pill}</li>
+      ))}
+    </ul>
     <!-- Secondary path for people who would rather talk than fill a form.
          Client decision (Sept 2026): the one outbound link allowed above SocialProof. -->
     <a
@@ -58,11 +67,9 @@ const video = asset(hero.media.video);
       {hero.ctaSecondary}
     </a>
 
-    {HERO_VARIANTS.map((id) => trust[id]!.length > 0 && (
+    {HERO_VARIANTS.map((id) => trust[id] && (
       <div data-hero-variant={id}>
-        <ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/25 pt-4 text-small opacity-90">
-          {trust[id]!.map((line) => <li>{line}</li>)}
-        </ul>
+        <p class="mt-4 truncate border-t border-white/25 pt-4 text-small font-medium">{trust[id]}</p>
       </div>
     ))}
   </div>

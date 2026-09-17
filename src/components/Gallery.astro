@@ -8,6 +8,6 @@ const { gallery } = content;
 const slides = gallery.items.map((item) => ({ src: item.src, alt: item.alt, title: item.caption }));
 ---
 
-<Section id="gallery" heading={gallery.heading} sub={gallery.sub}>
+<Section id="gallery" heading={gallery.heading} sub={gallery.sub} body={gallery.body}>
   <Carousel slides={slides} aspect="3 / 2" width="85%" widthMd="48%" label={gallery.heading} />
 </Section>

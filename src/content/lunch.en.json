@@ -76,17 +76,18 @@
   },
   "gallery": {
     "heading": "Your table, above the marina",
-    "sub": "The M floor of Address Beach Resort, facing the marina and Ain Dubai.",
+    "sub": "A rail seat, a sea breeze, and nowhere you need to be.",
+    "body": "Between the marina and Ain Dubai, on the M floor of Address Beach Resort. Quiet enough to talk. Open kitchen behind you, charcoal and fresh fish in the air. Four courses that take as long as you want them to.",
     "items": [
       {
         "src": "/img/terrace-day.webp",
         "alt": "The terrace at OSH Del Mar in daylight, facing Dubai Marina",
-        "caption": "The terrace at 2 PM"
+        "caption": "2 PM — the marina at full speed"
       },
       {
         "src": "/img/terrace-evening.webp",
         "alt": "The terrace at OSH Del Mar lit up in the evening",
-        "caption": "The same table at 5"
+        "caption": "5 PM — the same rail, a quieter terrace"
       }
     ]
   },

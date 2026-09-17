@@ -62,6 +62,8 @@ export interface GalleryItem {
 export interface Gallery {
   heading: string;
   sub: string;
+  /** One short paragraph under the sub: the feel of the terrace, what a guest actually gets. Ink, not muted. */
+  body: string;
   items: GalleryItem[];
 }
 

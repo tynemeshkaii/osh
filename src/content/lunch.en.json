@@ -6,7 +6,8 @@
   },
   "_placeholders": {
     "ALT_TIME": "Filled at runtime by the availability response",
-    "BUSINESS_FACT": "One client-confirmed fact for the business angle: Wi-Fi, 60-minute service, company invoice. Hidden until replaced."
+    "BUSINESS_FACT": "One client-confirmed fact for the business angle: Wi-Fi, 60-minute service, company invoice. Hidden until replaced.",
+    "_dishes": "dishes.items are working names taken from the photos we have. The client will send the real top-3 (incl. the shrimp) and a square photo ≤150 KB for each."
   },
   "draft": {
     "banner": "Draft · structure, copy and flow for review. Fonts, photos and final design are not in scope yet.",
@@ -50,10 +51,11 @@
       }
     },
     "defaultVariant": "view",
-    "cta": "Request my table",
+    "cta": "Get a table on the terrace",
     "ctaAlternatives": [
-      "Check my table",
-      "Reserve my table"
+      "Save me a table",
+      "I want that view",
+      "Check terrace availability"
     ],
     "ctaMicrocopy": "30 seconds. No prepayment.",
     "media": {
@@ -87,8 +89,8 @@
     "pressCaption": "TimeOut Dubai · VisitDubai"
   },
   "gallery": {
-    "heading": "The M floor, from 2 PM to sunset",
-    "sub": "The terrace sits above The Walk at JBR, facing the marina and Ain Dubai. Inside, the room is built around the open grills.",
+    "heading": "Your table, above the marina",
+    "sub": "The terrace sits on the M floor of Address Beach Resort, facing Dubai Marina and Ain Dubai. Lunch starts at 2, the light is best at 6.",
     "items": [
       {
         "src": "/img/terrace-day.webp",
@@ -97,34 +99,34 @@
         "aspect": "3 / 2"
       },
       {
-        "src": "/img/dish-kebab.webp",
-        "alt": "Lamb kebab skewers from the charcoal grill",
-        "caption": "From the charcoal grill",
-        "aspect": "1 / 1"
-      },
-      {
-        "src": "/img/dish-salmon-carpaccio.webp",
-        "alt": "Salmon carpaccio with citrus",
-        "caption": "From the fish bar",
-        "aspect": "1 / 1"
-      },
-      {
         "src": "/img/terrace-evening.webp",
         "alt": "The terrace at OSH Del Mar lit up in the evening",
         "caption": "The same table at 6",
         "aspect": "3 / 2"
+      }
+    ]
+  },
+  "dishes": {
+    "heading": "Come hungry",
+    "sub": "Charcoal grill, tandoor and a fish bar in one open kitchen. Three plates to start with — the rest is on the table.",
+    "items": [
+      {
+        "src": "/img/dish-kebab.webp",
+        "alt": "Lamb kebab skewers from the charcoal grill",
+        "name": "Lamb kebab",
+        "note": "From the charcoal grill"
       },
       {
-        "src": "/img/dish-salmon.webp",
-        "alt": "Grilled salmon with quinoa and herb sauce",
-        "caption": "Salmon, tandoor-side",
-        "aspect": "1 / 1"
+        "src": "/img/dish-salmon-carpaccio.webp",
+        "alt": "Salmon carpaccio with citrus",
+        "name": "Salmon carpaccio",
+        "note": "From the fish bar"
       },
       {
         "src": "/img/dish-tuna.webp",
         "alt": "Seared tuna with avocado and lime",
-        "caption": "Seared tuna",
-        "aspect": "1 / 1"
+        "name": "Seared tuna",
+        "note": "Avocado, lime"
       }
     ]
   },
@@ -243,7 +245,7 @@
     "ifUnavailable": "If that time is full, the host will offer the closest one in the same message — nothing is booked until you say yes."
   },
   "stickyCta": {
-    "label": "Request my table",
+    "label": "Get a table",
     "note": "★ 4.7 · No prepayment",
     "noteResume": "Finish your request →"
   },

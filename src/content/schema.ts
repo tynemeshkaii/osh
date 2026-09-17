@@ -67,6 +67,21 @@ export interface Gallery {
   items: GalleryItem[];
 }
 
+export interface DishItem {
+  src: string;
+  alt: string;
+  name: string;
+  /** One line under the name: cut, station, key ingredients. No prices — those live in hero and form. */
+  note: string;
+}
+
+export interface Dishes {
+  heading: string;
+  sub: string;
+  /** Exactly three cards; all square (1 / 1). */
+  items: DishItem[];
+}
+
 export interface FieldBase {
   label: string;
   helper?: string;
@@ -227,6 +242,7 @@ export interface Content {
   hero: Hero;
   socialProof: SocialProof;
   gallery: Gallery;
+  dishes: Dishes;
   form: Form;
   thanks: Thanks;
   stickyCta: StickyCta;

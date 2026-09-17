@@ -83,14 +83,12 @@
       {
         "src": "/img/terrace-day.webp",
         "alt": "The terrace at OSH Del Mar in daylight, facing Dubai Marina",
-        "caption": "The terrace at 2 PM",
-        "aspect": "3 / 2"
+        "caption": "The terrace at 2 PM"
       },
       {
         "src": "/img/terrace-evening.webp",
         "alt": "The terrace at OSH Del Mar lit up in the evening",
-        "caption": "The same table at 5",
-        "aspect": "3 / 2"
+        "caption": "The same table at 5"
       }
     ]
   },

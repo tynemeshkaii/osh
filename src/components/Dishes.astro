@@ -1,31 +1,13 @@
 ---
 import Section from '@/components/Section.astro';
+import Carousel from '@/components/Carousel.astro';
 import { content } from '@/content/schema';
-import { asset } from '@/lib/assets';
 
 const { dishes } = content;
+// Narrower slides than the gallery: the next plate peeking in is part of the appetite.
+const slides = dishes.items.map((item) => ({ src: item.src, alt: item.alt, title: item.name, note: item.note }));
 ---
 
 <Section id="dishes" heading={dishes.heading} sub={dishes.sub} surface>
-  <!-- Mobile: hero dish full width, two below. Desktop: three in a row. All squares — fixed ratio against CLS. -->
-  <ul class="grid grid-cols-2 gap-3 md:grid-cols-3">
-    {dishes.items.map((item, i) => (
-      <li class:list={[i === 0 && 'col-span-2 md:col-span-1']}>
-        <figure>
-          <img
-            src={asset(item.src)}
-            alt={item.alt}
-            loading="lazy"
-            decoding="async"
-            class="w-full rounded-card object-cover"
-            style="aspect-ratio: 1 / 1;"
-          />
-          <figcaption class="mt-2">
-            <span class="block text-body font-medium">{item.name}</span>
-            <span class="block text-small text-muted">{item.note}</span>
-          </figcaption>
-        </figure>
-      </li>
-    ))}
-  </ul>
+  <Carousel slides={slides} aspect="1 / 1" width="72%" widthMd="32%" label={dishes.heading} />
 </Section>

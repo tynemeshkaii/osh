@@ -1,0 +1,62 @@
+---
+/**
+ * Horizontal photo carousel on CSS scroll-snap. No library, no JS, no arrows,
+ * no autoplay: the next slide peeks in from the right, which is the swipe hint.
+ * The "2 / 6" counter is printed on each slide, so it always sits on the
+ * photo being looked at. All slides share one aspect ratio, so the track
+ * height is fixed (CLS 0).
+ */
+import { asset } from '@/lib/assets';
+
+export interface Slide {
+  src: string;
+  alt: string;
+  title: string;
+  note?: string;
+}
+
+interface Props {
+  slides: Slide[];
+  /** CSS aspect-ratio for every slide, e.g. "3 / 2". */
+  aspect: string;
+  /** Slide width as a share of the container, mobile / md+. */
+  width: string;
+  widthMd: string;
+  label: string;
+}
+const { slides, aspect, width, widthMd, label } = Astro.props;
+const total = slides.length;
+---
+
+<!-- Bleeds past the 16px gutter; scroll-padding keeps snapped slides aligned to it. -->
+<ul
+  class="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 [scroll-padding-inline:16px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  style={`--slide: ${width}; --slide-md: ${widthMd};`}
+  aria-label={label}
+>
+  {slides.map((s, i) => (
+    <li class="w-[var(--slide)] shrink-0 snap-start md:w-[var(--slide-md)]">
+      <figure>
+        <div class="relative">
+          <img
+            src={asset(s.src)}
+            alt={s.alt}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            decoding="async"
+            class="w-full rounded-card object-cover"
+            style={`aspect-ratio: ${aspect};`}
+          />
+          {total > 1 && (
+            <span class="pointer-events-none absolute left-3 top-3 rounded-pill bg-ink/60 px-2.5 py-1 text-[12px] font-medium leading-[1.4] text-white tabular-nums" aria-hidden="true">
+              {i + 1} / {total}
+            </span>
+          )}
+        </div>
+        <figcaption class="mt-2">
+          <span class:list={['block', s.note ? 'text-body font-medium' : 'text-small text-muted']}>{s.title}</span>
+          {s.note && <span class="block text-small text-muted">{s.note}</span>}
+        </figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>

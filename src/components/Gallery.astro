@@ -1,27 +1,13 @@
 ---
 import Section from '@/components/Section.astro';
+import Carousel from '@/components/Carousel.astro';
 import { content } from '@/content/schema';
-import { asset } from '@/lib/assets';
 
 const { gallery } = content;
+// Every gallery photo is 3 / 2 — one ratio keeps the track height fixed.
+const slides = gallery.items.map((item) => ({ src: item.src, alt: item.alt, title: item.caption }));
 ---
 
 <Section id="gallery" heading={gallery.heading} sub={gallery.sub}>
-  <ul class="grid grid-cols-2 gap-3">
-    {gallery.items.map((item) => (
-      <li class:list={[item.aspect !== '1 / 1' && 'col-span-2']}>
-        <figure>
-          <img
-            src={asset(item.src)}
-            alt={item.alt}
-            loading="lazy"
-            decoding="async"
-            class="w-full rounded-card object-cover"
-            style={`aspect-ratio: ${item.aspect};`}
-          />
-          <figcaption class="mt-2 text-small text-muted">{item.caption}</figcaption>
-        </figure>
-      </li>
-    ))}
-  </ul>
+  <Carousel slides={slides} aspect="3 / 2" width="85%" widthMd="48%" label={gallery.heading} />
 </Section>

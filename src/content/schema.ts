@@ -60,8 +60,6 @@ export interface GalleryItem {
   src: string;
   alt: string;
   caption: string;
-  /** CSS aspect-ratio value, e.g. "3 / 2". Fixed per slot against CLS. */
-  aspect: string;
 }
 
 export interface Gallery {

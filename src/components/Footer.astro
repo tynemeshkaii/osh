@@ -6,13 +6,13 @@ const { footer, links } = content;
 const ext = 'inline-flex min-h-[44px] items-center text-ink underline underline-offset-4';
 ---
 
-<footer class="border-t border-line py-8 pb-[calc(32px+72px)] text-small text-muted">
+<footer class="border-t border-line py-8 pb-[max(32px,env(safe-area-inset-bottom))] text-small text-muted">
   <div class="mx-auto w-full max-w-[640px] px-4">
     <p>
-      <a href={links.maps.url} target="_blank" rel="noopener" class="text-ink" data-cta="maps">{footer.address}</a>
+      <a href={links.maps.url} target="_blank" rel="noopener" class={ext} data-cta="maps">{footer.address}</a>
     </p>
     <p class="mt-2">
-      <a href={telHref(footer.phone)} class="inline-flex min-h-[44px] items-center text-ink" data-cta="phone">{footer.phone}</a>
+      <a href={telHref(footer.phone)} class={ext} data-cta="phone">{footer.phone}</a>
     </p>
     <ul class="mt-2 flex flex-wrap gap-x-6">
       <li><a href={links.instagram.url} target="_blank" rel="noopener" class={ext} data-cta="instagram">{links.instagram.label}</a></li>

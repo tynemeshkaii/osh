@@ -45,7 +45,7 @@
 --surface:   #FFFFFF;
 --ink:       #16181C;
 --muted:     #5C6067;
---accent:    #B08B4F;  /* тёплая латунь */
+--accent:    #8F7140;  /* тёплая латунь, затемнена до 4,5:1 на белом (AA) */
 --accent-ink:#FFFFFF;
 --line:      #E6E1D9;
 --overlay:   rgba(13,15,18,.45);  /* затемнение поверх hero-видео */

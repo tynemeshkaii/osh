@@ -8,7 +8,7 @@
   --surface: #ffffff;
   --ink: #16181c;
   --muted: #5c6067;
-  --accent: #b08b4f;
+  --accent: #8f7140; /* was #B08B4F — darkened to 4.56:1 on white (AA) */
   --accent-ink: #ffffff;
   --line: #e6e1d9;
   --overlay: rgba(13, 15, 18, 0.45);

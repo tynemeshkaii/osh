@@ -74,3 +74,12 @@ const video = asset(hero.media.video);
     ))}
   </div>
 </section>
+
+<script>
+  // Autoplay is a motion the visitor may have opted out of: keep the poster instead.
+  const video = document.querySelector<HTMLVideoElement>('[data-hero] video');
+  if (video && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    video.removeAttribute('autoplay');
+    video.pause();
+  }
+</script>

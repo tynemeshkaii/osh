@@ -231,9 +231,9 @@
   "stickyCta": {
     "label": "Get a table",
     "note": {
-      "view": { "today": "Today, 2–5 PM · 150 AED", "tomorrow": "Tomorrow, 2–5 PM · 150 AED" },
-      "business": { "today": "Today, 2–5 PM · 150 AED", "tomorrow": "Tomorrow, 2–5 PM · 150 AED" },
-      "price": { "today": "Today, 2–5 PM · 20% off", "tomorrow": "Tomorrow, 2–5 PM · 20% off" }
+      "view": { "today": "Today, seatings 2–5 PM · 150 AED", "tomorrow": "Tomorrow, seatings 2–5 PM · 150 AED" },
+      "business": { "today": "Today, seatings 2–5 PM · 150 AED", "tomorrow": "Tomorrow, seatings 2–5 PM · 150 AED" },
+      "price": { "today": "Today, seatings 2–5 PM · 20% off", "tomorrow": "Tomorrow, seatings 2–5 PM · 20% off" }
     },
     "noteResume": "Finish your request →"
   },

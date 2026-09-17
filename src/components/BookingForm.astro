@@ -27,13 +27,14 @@ const clientConfig = JSON.stringify({
   errors: form.errors,
   offerLabels: Object.fromEntries(step2.fields.offer.options.map((o) => [o.value, o.label])),
   seatingLabels: Object.fromEntries(step1.fields.seating.options.map((o) => [o.value, o.label])),
+  slotLabels: Object.fromEntries(slots.map((s) => [s.value, s.label])),
   summaryTemplate: thanks.summaryTemplate,
   ctaLoading: step2.ctaLoading,
   cta: step2.cta,
 });
 
 const inputClass =
-  'mt-1 block h-12 w-full rounded-card border border-line bg-surface px-4 text-body outline-none focus:border-accent aria-[invalid=true]:border-error';
+  'mt-1 block h-12 w-full scroll-mt-8 rounded-card border border-line bg-surface px-4 text-body outline-none focus:border-ink aria-[invalid=true]:border-error';
 const labelClass = 'block text-small font-medium';
 const errorClass = 'mt-1 text-small text-error';
 const primaryBtn =
@@ -48,16 +49,16 @@ const pillClass =
        Validation is the shared schema in src/lib/validation.ts.
        Nothing is sent yet; the submit handler is where the fetch to the
        Cloudflare Function will go. Field values are never cleared on error. -->
-  <form id="booking-form" class="rounded-card border border-line bg-surface p-5 md:p-6" novalidate>
+  <form id="booking-form" class="scroll-mt-4 rounded-card border border-line bg-surface p-5 md:p-6" novalidate>
     <input type="hidden" name="variant" value="" data-variant-field />
 
-    <fieldset data-step="1" class="border-0 p-0">
+    <fieldset data-step="1" class="border-0 p-0" aria-labelledby="step1-heading">
       <p class="text-small text-muted">{progress.step1}</p>
-      <legend class="mt-1 text-h3">{step1.heading}</legend>
+      <h3 id="step1-heading" class="mt-1 text-h3">{step1.heading}</h3>
 
       <!-- Date: Today / Tomorrow / Pick a date. The native input is the single
            source of the value; quick picks just fill it and stay hidden. -->
-      <fieldset class="mt-5 border-0 p-0" data-date-group>
+      <fieldset class="mt-5 scroll-mt-8 border-0 p-0" data-date-group>
         <legend class={labelClass}>{step1.fields.date.label}</legend>
         <div class="mt-2 flex flex-wrap gap-2" role="group">
           <button type="button" class={pillClass} data-date-quick="today" aria-pressed="false">{step1.fields.date.quick.today}</button>
@@ -72,7 +73,7 @@ const pillClass =
 
       <!-- Time: one pill per seating from TIME_SLOTS. Radios, so the value
            travels with the form and keyboard/screen-reader users get a group. -->
-      <fieldset class="mt-5 border-0 p-0" data-time-group>
+      <fieldset class="mt-5 scroll-mt-8 border-0 p-0" data-time-group>
         <legend class={labelClass}>{step1.fields.time.label}</legend>
         <div class="mt-2 grid grid-cols-3 gap-2">
           {slots.map((s) => (
@@ -87,13 +88,13 @@ const pillClass =
 
       <!-- Guests: one tap for 1–6; "7+" reveals the number input. The native
            input is the single source of the value, same pattern as the date. -->
-      <fieldset class="mt-5 border-0 p-0" data-guests-group>
+      <fieldset class="mt-5 scroll-mt-8 border-0 p-0" data-guests-group>
         <legend class={labelClass}>{step1.fields.guests.label}</legend>
-        <div class="mt-2 flex flex-wrap gap-2" role="group">
+        <div class="mt-2 grid grid-cols-4 gap-2" role="group">
           {GUEST_PILLS.map((n) => (
-            <button type="button" class:list={[pillClass, 'min-w-[44px]']} data-guests-quick={n} aria-pressed={n === GUESTS_DEFAULT}>{n}</button>
+            <button type="button" class={pillClass} data-guests-quick={n} aria-pressed={n === GUESTS_DEFAULT}>{n}</button>
           ))}
-          <button type="button" class:list={[pillClass, 'min-w-[44px]']} data-guests-quick="more" aria-pressed="false">{step1.fields.guests.more}</button>
+          <button type="button" class={pillClass} data-guests-quick="more" aria-pressed="false">{step1.fields.guests.more}</button>
         </div>
         <label for="f-guests" class:list={['mt-3', labelClass]} data-guests-more-label hidden>{step1.fields.guests.moreLabel}</label>
         <input id="f-guests" name="guests" type="number" min={GUESTS_MIN} max={GUESTS_MAX} value={GUESTS_DEFAULT} data-more-from={GUESTS_MORE_FROM} inputmode="numeric" class={inputClass} autocomplete="off" aria-describedby="e-guests" hidden />
@@ -118,12 +119,12 @@ const pillClass =
       </button>
     </fieldset>
 
-    <fieldset data-step="2" class="border-0 p-0" hidden>
-      <div class="flex items-baseline justify-between">
+    <fieldset data-step="2" class="border-0 p-0" aria-labelledby="step2-heading" hidden>
+      <div class="flex items-center justify-between">
         <p class="text-small text-muted">{progress.step2}</p>
-        <button type="button" class="min-h-[44px] text-small font-medium underline" data-step-back>{progress.back}</button>
+        <button type="button" class="min-h-[44px] text-small font-medium underline underline-offset-4" data-step-back>{progress.back}</button>
       </div>
-      <legend class="mt-1 text-h3">{step2.heading}</legend>
+      <h3 id="step2-heading" class="mt-1 text-h3">{step2.heading}</h3>
 
       <div class="mt-5 grid gap-4">
         <div>
@@ -192,7 +193,7 @@ const pillClass =
     {DRAFT && <p class="mt-4 text-small text-muted">{form.thanksNote}</p>}
   </div>
 
-  <aside class="mt-6 rounded-card border border-line p-5">
+  <aside id="booking-aside" class="mt-6 rounded-card border border-line p-5">
     <h3 class="text-h3">{whatsappBlock.heading}</h3>
     <p class="mt-2 text-body text-muted">{whatsappBlock.body}</p>
     <a href={waHref} target="_blank" rel="noopener" class="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-pill border border-ink px-5 text-body font-medium" data-cta="whatsapp">
@@ -219,6 +220,7 @@ const pillClass =
     errors: Record<ErrorKey, string>;
     offerLabels: Record<string, string>;
     seatingLabels: Record<string, string>;
+    slotLabels: Record<string, string>;
     summaryTemplate: string;
     ctaLoading: string;
     cta: string;
@@ -472,7 +474,7 @@ const pillClass =
       const summary = template
         .replace('{{GUESTS}}', String(v.guests))
         .replace('{{DATE}}', date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }))
-        .replace('{{TIME}}', date.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }))
+        .replace('{{TIME}}', cfg.slotLabels[v.time] ?? v.time)
         .replace('{{SEATING}}', cfg.seatingLabels[v.seating] ?? v.seating)
         .replace('{{OFFER}}', cfg.offerLabels[v.offer] ?? v.offer);
       const summaryEl = thanksPanel.querySelector<HTMLElement>('[data-thanks-summary]');
@@ -480,6 +482,9 @@ const pillClass =
 
       form.hidden = true;
       thanksPanel.hidden = false;
+      // The panel already has its own WhatsApp CTA; a second one right below is noise.
+      const aside = document.getElementById('booking-aside');
+      if (aside) aside.hidden = true;
       thanksPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       thanksPanel.focus({ preventScroll: true });
     };
